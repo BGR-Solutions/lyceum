@@ -75,7 +75,8 @@ class EnrollmentServiceTest {
     }
 
     @Test
-    void createEnrollmentThrowsBecauseStudentNameIsEmptyInCurrentBehavior() {
+    void createEnrollmentPersistsAndPublishesEvent() {
+        UUID studentId = UUID.randomUUID();
         Classroom classroom = new Classroom(
                 UUID.randomUUID(),
                 new Discipline(UUID.randomUUID(), "Math"),
@@ -83,11 +84,15 @@ class EnrollmentServiceTest {
                 new EnrollmentPeriod(LocalDate.now().minusDays(1), LocalDate.now().plusDays(1))
         );
         when(classroomRepository.findById(classroom.getId())).thenReturn(Optional.of(classroom));
+        when(enrollmentRepository.save(any(Enrollment.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        doNothing().when(eventPublisher).publish(any(com.lyceum.academic.domain.event.EnrollmentCreated.class));
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> service.createEnrollment(new CreateEnrollmentCommand(UUID.randomUUID(), classroom.getId())));
+        Enrollment created = service.createEnrollment(new CreateEnrollmentCommand(studentId, classroom.getId()));
 
-        assertEquals("Student name cannot be empty", ex.getMessage());
+        assertEquals(studentId, created.getStudent().getId());
+        assertEquals("Unknown", created.getStudent().getName());
+        verify(enrollmentRepository).save(any(Enrollment.class));
+        verify(eventPublisher).publish(any(com.lyceum.academic.domain.event.EnrollmentCreated.class));
     }
 
     @Test

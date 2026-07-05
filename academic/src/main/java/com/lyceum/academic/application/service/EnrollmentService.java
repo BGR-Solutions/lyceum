@@ -36,11 +36,11 @@ public class EnrollmentService {
         Classroom classroom = classroomRepository.findById(command.getClassroomId())
                 .orElseThrow(() -> new IllegalArgumentException("Classroom not found"));
 
-        Student student = new Student(command.getStudentId(), ""); // Nome pode vir de outro contexto
-
         if (!classroom.isOpenForEnrollment(java.time.LocalDate.now())) {
             throw new IllegalStateException("Enrollment period is closed");
         }
+
+        Student student = new Student(command.getStudentId(), "Unknown"); // Nome pode vir de outro contexto
 
         Enrollment enrollment = new Enrollment(student, classroom);
         Enrollment saved = enrollmentRepository.save(enrollment);
