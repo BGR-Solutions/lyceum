@@ -11,6 +11,10 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>academic</artifactId>
 
+    <properties>
+        <flyway.version>10.15.2</flyway.version>
+    </properties>
+
     <dependencies>
         <!-- Starter base -->
         <dependency>
@@ -47,10 +51,12 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
+            <version>${flyway.version}</version>
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
+            <version>${flyway.version}</version>
         </dependency>
 
         <!-- Lombok (opcional, para reduzir boilerplate) -->
