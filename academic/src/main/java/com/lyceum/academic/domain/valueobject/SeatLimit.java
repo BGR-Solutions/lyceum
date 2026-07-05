@@ -3,6 +3,10 @@ package com.lyceum.academic.domain.valueobject;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
+/**
+ * Value object representing the seat limit of a classroom.
+ * It keeps track of the maximum number of seats and the number of occupied seats.
+ */
 @Embeddable
 public class SeatLimit {
     @Column(name = "max_seats", nullable = false)

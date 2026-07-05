@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.lyceum.academic.application.command.EnrollmentCommandsTest
+-------------------------------------------------------------------------------
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.007 s -- in com.lyceum.academic.application.command.EnrollmentCommandsTest

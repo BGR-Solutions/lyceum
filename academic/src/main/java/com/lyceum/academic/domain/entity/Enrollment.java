@@ -5,6 +5,10 @@ import jakarta.persistence.*;
 
 import java.util.UUID;
 
+/**
+ * Represents an enrollment of a student in a classroom.
+ * Each enrollment has a unique identifier, a student, a classroom, and a status.
+ */
 @Entity
 @Table(name = "enrollments", uniqueConstraints = {
         @UniqueConstraint(name = "uk_enrollment_student_classroom", columnNames = {"student_id", "classroom_id"})

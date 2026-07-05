@@ -3,6 +3,11 @@ package com.lyceum.academic.domain.event;
 import java.time.Instant;
 import java.util.UUID;
 
+/**
+ * Represents the event of an enrollment being confirmed.
+ * This event captures the unique identifiers of the enrollment, student, and classroom involved,
+ * along with the timestamp of when the event occurred.
+ */
 public class EnrollmentConfirmed {
     private final UUID enrollmentId;
     private final UUID studentId;

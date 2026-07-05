@@ -19,6 +19,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Service class to handle enrollment-related operations.
+ * This service provides methods to create, confirm, and cancel enrollments.
+ */
 @Service
 public class EnrollmentService {
 

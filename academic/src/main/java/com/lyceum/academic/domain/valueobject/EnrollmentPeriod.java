@@ -5,6 +5,10 @@ import jakarta.persistence.Embeddable;
 
 import java.time.LocalDate;
 
+/**
+ * Value object representing the enrollment period for a classroom.
+ * It defines the start and end dates of the enrollment period and provides a method to check if the enrollment is currently open.
+ */
 @Embeddable
 public class EnrollmentPeriod {
     @Column(name = "enrollment_start", nullable = false)

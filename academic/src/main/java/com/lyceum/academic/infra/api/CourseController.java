@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * REST controller for managing Courses.
+ * Provides endpoints to create, retrieve, update, and delete courses.
+ */
 @RestController
 @RequestMapping("/courses")
 @Tag(name = "Courses")

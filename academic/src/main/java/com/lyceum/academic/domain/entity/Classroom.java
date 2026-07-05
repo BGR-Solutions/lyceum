@@ -8,6 +8,10 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.UUID;
 
+/**
+ * Represents a classroom in the academic system.
+ * Each classroom has a unique identifier, a discipline, a status, a seat limit, and an enrollment period.
+ */
 @Entity
 @Table(name = "classrooms")
 public class Classroom {

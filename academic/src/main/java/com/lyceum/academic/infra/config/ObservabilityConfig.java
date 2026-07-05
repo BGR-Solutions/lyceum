@@ -11,6 +11,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.UUID;
 
+/**
+ * Servlet filter that propagates or generates a correlation ID for distributed tracing.
+ * The trace ID is stored in the MDC and returned via the {@code X-Correlation-Id} response header.
+ */
 @Component
 public class ObservabilityConfig extends OncePerRequestFilter {
     @Override

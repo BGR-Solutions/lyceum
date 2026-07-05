@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Port to manage persistence of Classroom entities.
+ */
 public interface ClassroomRepository {
     Optional<Classroom> findById(UUID classroomId);
     Classroom save(Classroom classroom);

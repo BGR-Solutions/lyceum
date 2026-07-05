@@ -4,6 +4,10 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * JPA entity representing a notification stored in the system.
+ * Each notification has a message, a type, and a creation timestamp.
+ */
 @Entity
 @Table(name = "notifications")
 public class Notification {

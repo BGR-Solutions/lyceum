@@ -18,6 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Service class providing CRUD operations for Students, Courses, Disciplines, and Classrooms.
+ */
 @Service
 public class CrudService {
     private final StudentRepositoryJpa studentRepository;

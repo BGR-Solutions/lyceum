@@ -1,0 +1,15 @@
+/home/runner/work/lyceum/lyceum/academic/src/test/java/com/lyceum/academic/application/command/EnrollmentCommandsTest.java
+/home/runner/work/lyceum/lyceum/academic/src/test/java/com/lyceum/academic/application/service/EnrollmentServiceTest.java
+/home/runner/work/lyceum/lyceum/academic/src/test/java/com/lyceum/academic/domain/entity/BasicDomainEntitiesTest.java
+/home/runner/work/lyceum/lyceum/academic/src/test/java/com/lyceum/academic/domain/entity/ClassroomTest.java
+/home/runner/work/lyceum/lyceum/academic/src/test/java/com/lyceum/academic/domain/entity/EnrollmentTest.java
+/home/runner/work/lyceum/lyceum/academic/src/test/java/com/lyceum/academic/domain/enums/DomainEnumsTest.java
+/home/runner/work/lyceum/lyceum/academic/src/test/java/com/lyceum/academic/domain/event/EnrollmentEventsTest.java
+/home/runner/work/lyceum/lyceum/academic/src/test/java/com/lyceum/academic/domain/valueobject/EnrollmentPeriodTest.java
+/home/runner/work/lyceum/lyceum/academic/src/test/java/com/lyceum/academic/domain/valueobject/SeatLimitTest.java
+/home/runner/work/lyceum/lyceum/academic/src/test/java/com/lyceum/academic/infra/adapters/messaging/RabbitMqEventPublisherTest.java
+/home/runner/work/lyceum/lyceum/academic/src/test/java/com/lyceum/academic/infra/api/ClassroomControllerTest.java
+/home/runner/work/lyceum/lyceum/academic/src/test/java/com/lyceum/academic/infra/api/EnrollmentControllerTest.java
+/home/runner/work/lyceum/lyceum/academic/src/test/java/com/lyceum/academic/infra/config/DatabaseConfigTest.java
+/home/runner/work/lyceum/lyceum/academic/src/test/java/com/lyceum/academic/infra/config/MessagingConfigTest.java
+/home/runner/work/lyceum/lyceum/academic/src/test/java/com/lyceum/academic/infra/config/ProfileConfigTest.java

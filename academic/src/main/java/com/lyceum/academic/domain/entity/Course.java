@@ -7,6 +7,10 @@ import jakarta.persistence.Table;
 
 import java.util.UUID;
 
+/**
+ * Represents a course in the academic system.
+ * Each course has a unique identifier and a name.
+ */
 @Entity
 @Table(name = "courses")
 public class Course {

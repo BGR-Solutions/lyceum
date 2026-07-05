@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * REST controller for managing Students.
+ * Provides endpoints to create, retrieve, update, and delete students.
+ */
 @RestController
 @RequestMapping("/students")
 @Tag(name = "Students")

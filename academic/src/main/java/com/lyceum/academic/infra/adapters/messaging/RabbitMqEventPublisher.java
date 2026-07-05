@@ -10,6 +10,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+/**
+ * RabbitMqEventPublisher is an implementation of the EventPublisher interface that publishes events to a RabbitMQ message broker.
+ * It uses the RabbitTemplate to send messages to specific queues based on the type of event being published.
+ */
 @Component
 public class RabbitMqEventPublisher implements EventPublisher {
 

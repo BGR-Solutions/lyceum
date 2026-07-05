@@ -13,6 +13,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * REST controller for managing Classrooms.
+ * Provides endpoints to create, retrieve, update status, and delete classrooms.
+ */
 @RestController
 @RequestMapping("/classrooms")
 @Tag(name = "Classrooms")

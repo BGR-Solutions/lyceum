@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
 
+/**
+ * Global exception handler that translates application exceptions into standardized HTTP error responses.
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 

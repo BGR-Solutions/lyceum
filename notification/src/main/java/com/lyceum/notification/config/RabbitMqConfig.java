@@ -7,6 +7,10 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configuration class for RabbitMQ messaging infrastructure in the notification module.
+ * Declares the enrollment exchange, queues, dead-letter queue, bindings, message converter, and listener container factory.
+ */
 @Configuration
 public class RabbitMqConfig {
 

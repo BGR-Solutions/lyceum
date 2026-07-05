@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Port to manage persistence of Enrollment entities.
+ */
 public interface EnrollmentRepository {
     Enrollment save(Enrollment enrollment);
     Optional<Enrollment> findById(UUID enrollmentId);

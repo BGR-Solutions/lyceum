@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * REST controller for managing Enrollments.
+ * Provides endpoints to create, confirm, cancel, and query enrollments.
+ */
 @RestController
 @RequestMapping("/enrollments")
 @Tag(name = "Enrollments")

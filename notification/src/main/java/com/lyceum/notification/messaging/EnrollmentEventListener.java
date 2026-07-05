@@ -8,6 +8,10 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * RabbitMQ listener that handles enrollment domain events and triggers notifications.
+ * Implements idempotency by checking whether an event has already been processed before acting on it.
+ */
 @Component
 public class EnrollmentEventListener {
 

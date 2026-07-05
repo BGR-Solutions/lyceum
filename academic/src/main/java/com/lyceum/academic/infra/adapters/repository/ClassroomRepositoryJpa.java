@@ -12,6 +12,11 @@ import jakarta.persistence.LockModeType;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Repository interface for managing Classroom entities.
+ * This interface extends JpaRepository to provide CRUD operations and custom query methods for Classroom entities.
+ * It also implements the ClassroomRepository interface to adhere to the application's domain-driven design principles.
+ */
 @Repository
 public interface ClassroomRepositoryJpa extends JpaRepository<Classroom, UUID>, ClassroomRepository {
     @Override

@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * REST controller for managing Disciplines.
+ * Provides endpoints to create, retrieve, update, and delete disciplines.
+ */
 @RestController
 @RequestMapping("/disciplines")
 @Tag(name = "Disciplines")

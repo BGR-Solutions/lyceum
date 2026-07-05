@@ -4,6 +4,10 @@ import jakarta.persistence.*;
 
 import java.util.UUID;
 
+/**
+ * Represents a discipline in the academic system.
+ * Each discipline has a unique identifier, a name, and belongs to a course.
+ */
 @Entity
 @Table(name = "disciplines")
 public class Discipline {
