@@ -1,0 +1,10 @@
+spring:
+  profiles:
+    active: unified
+    group:
+      unified:
+        - local
+
+# Configurações comuns
+app:
+  name: academic-service

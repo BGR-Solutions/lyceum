@@ -1,0 +1,21 @@
+{
+  "java.import.maven.enabled": true,
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "java.import.exclusions": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.next/**",
+    "frontend/**"
+  ],
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true
+  },
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/build/**": true
+  }
+}
