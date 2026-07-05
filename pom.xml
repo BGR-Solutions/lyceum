@@ -20,6 +20,7 @@
         <spring.boot.version>3.2.5</spring.boot.version>
         <lombok.version>1.18.32</lombok.version>
         <postgres.version>42.7.3</postgres.version>
+        <flyway.version>10.15.0</flyway.version>
     </properties>
 
     <dependencyManagement>
@@ -30,6 +31,17 @@
                 <version>${spring.boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <!-- Flyway 10.x: sobrescreve o 9.x gerenciado pelo Spring Boot 3.2.x -->
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-core</artifactId>
+                <version>${flyway.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-database-postgresql</artifactId>
+                <version>${flyway.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
