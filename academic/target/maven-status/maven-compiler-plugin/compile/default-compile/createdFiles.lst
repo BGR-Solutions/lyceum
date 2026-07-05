@@ -1,9 +1,8 @@
+com\lyceum\academic\infra\config\ProfileConfig.class
 com\lyceum\academic\infra\api\EnrollmentController.class
 com\lyceum\academic\infra\adapters\repository\EnrollmentRepositoryJpa.class
-com\lyceum\academic\config\MessagingConfig.class
 com\lyceum\academic\domain\entity\Course.class
 com\lyceum\academic\domain\entity\Student.class
-com\lyceum\academic\config\DatabaseConfig.class
 com\lyceum\academic\domain\valueobject\SeatLimit.class
 com\lyceum\academic\infra\adapters\repository\ClassroomRepositoryJpa.class
 com\lyceum\academic\domain\entity\Enrollment.class
@@ -16,14 +15,15 @@ com\lyceum\academic\domain\entity\Discipline.class
 com\lyceum\academic\domain\event\EnrollmentCancelled.class
 com\lyceum\academic\application\command\CreateEnrollmentCommand.class
 com\lyceum\academic\domain\event\EnrollmentCreated.class
-com\lyceum\academic\config\ProfileConfig.class
 com\lyceum\academic\domain\enums\NotificationType.class
 com\lyceum\academic\application\ports\ClassroomRepository.class
 com\lyceum\academic\domain\valueobject\EnrollmentPeriod.class
 com\lyceum\academic\domain\event\EnrollmentConfirmed.class
 com\lyceum\academic\application\command\ConfirmEnrollmentCommand.class
 com\lyceum\academic\application\ports\EventPublisher.class
+com\lyceum\academic\infra\config\DatabaseConfig.class
 com\lyceum\academic\infra\api\ClassroomController.class
+com\lyceum\academic\infra\config\MessagingConfig.class
 com\lyceum\academic\application\ports\EnrollmentRepository.class
 com\lyceum\academic\domain\entity\Classroom.class
 com\lyceum\academic\application\command\CancelEnrollmentCommand.class
