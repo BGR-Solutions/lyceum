@@ -1,27 +1,40 @@
 package com.lyceum.notification.messaging;
 
 import com.lyceum.notification.entity.Notification;
+import com.lyceum.notification.entity.ProcessedEvent;
+import com.lyceum.notification.repository.ProcessedEventRepository;
 import com.lyceum.notification.service.NotificationService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Listener for enrollment events from RabbitMQ.
- * This listener receives messages from the "enrollment.events" queue and processes them to create notifications.
+ * RabbitMQ listener that handles enrollment domain events and triggers notifications.
+ * Implements idempotency by checking whether an event has already been processed before acting on it.
  */
 @Component
 public class EnrollmentEventListener {
 
     private final NotificationService notificationService;
+    private final ProcessedEventRepository processedEventRepository;
 
-    public EnrollmentEventListener(NotificationService notificationService) {
+    public EnrollmentEventListener(NotificationService notificationService,
+                                   ProcessedEventRepository processedEventRepository) {
         this.notificationService = notificationService;
+        this.processedEventRepository = processedEventRepository;
     }
 
+    @Transactional
     @RabbitListener(queues = "enrollment.events")
-    public void handleEnrollmentEvent(String message) {
-        // Aqui você pode mapear o JSON recebido para um objeto Notification
-        Notification notification = new Notification("Enrollment event received: " + message);
+    public void handleEnrollmentEvent(EnrollmentEventMessage message) {
+        if (message.eventId() == null || processedEventRepository.existsById(message.eventId())) {
+            return;
+        }
+
+        Notification notification = new Notification(
+                "Evento " + message.eventType() + " para matrícula " + message.enrollmentId()
+        );
         notificationService.sendNotification(notification);
+        processedEventRepository.save(new ProcessedEvent(message.eventId()));
     }
 }

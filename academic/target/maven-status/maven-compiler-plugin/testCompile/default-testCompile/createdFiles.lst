@@ -1,0 +1,15 @@
+com/lyceum/academic/domain/entity/EnrollmentTest.class
+com/lyceum/academic/domain/entity/BasicDomainEntitiesTest.class
+com/lyceum/academic/domain/valueobject/SeatLimitTest.class
+com/lyceum/academic/infra/api/EnrollmentControllerTest.class
+com/lyceum/academic/infra/api/ClassroomControllerTest.class
+com/lyceum/academic/application/command/EnrollmentCommandsTest.class
+com/lyceum/academic/domain/entity/ClassroomTest.class
+com/lyceum/academic/application/service/EnrollmentServiceTest.class
+com/lyceum/academic/domain/enums/DomainEnumsTest.class
+com/lyceum/academic/infra/config/MessagingConfigTest.class
+com/lyceum/academic/domain/event/EnrollmentEventsTest.class
+com/lyceum/academic/infra/adapters/messaging/RabbitMqEventPublisherTest.class
+com/lyceum/academic/infra/config/DatabaseConfigTest.class
+com/lyceum/academic/infra/config/ProfileConfigTest.class
+com/lyceum/academic/domain/valueobject/EnrollmentPeriodTest.class

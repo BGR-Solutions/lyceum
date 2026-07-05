@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
- * Represents a notification entity in the system.
- * Each notification has a unique identifier, message, type, and creation timestamp.
+ * JPA entity representing a notification stored in the system.
+ * Each notification has a message, a type, and a creation timestamp.
  */
 @Entity
 @Table(name = "notifications")
@@ -26,13 +26,13 @@ public class Notification {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    public Notification() {
+    protected Notification() {
         this.createdAt = LocalDateTime.now();
     }
 
     public Notification(String message) {
         this.message = message;
-        this.type = NotificationType.INFO; // Default type
+        this.type = NotificationType.INFO;
         this.createdAt = LocalDateTime.now();
     }
 
@@ -42,28 +42,8 @@ public class Notification {
         this.createdAt = LocalDateTime.now();
     }
 
-    // Getters e Setters
-    public UUID getId() {
-        return id;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public NotificationType getType() {
-        return type;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public void setType(NotificationType type) {
-        this.type = type;
-    }
+    public UUID getId() { return id; }
+    public String getMessage() { return message; }
+    public NotificationType getType() { return type; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
 }

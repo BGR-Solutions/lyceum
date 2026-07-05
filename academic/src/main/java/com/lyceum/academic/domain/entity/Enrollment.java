@@ -1,6 +1,7 @@
 package com.lyceum.academic.domain.entity;
 
 import com.lyceum.academic.domain.enums.EnrollmentStatus;
+import jakarta.persistence.*;
 
 import java.util.UUID;
 
@@ -8,11 +9,28 @@ import java.util.UUID;
  * Represents an enrollment of a student in a classroom.
  * Each enrollment has a unique identifier, a student, a classroom, and a status.
  */
+@Entity
+@Table(name = "enrollments", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_enrollment_student_classroom", columnNames = {"student_id", "classroom_id"})
+})
 public class Enrollment {
-    private final UUID id;
-    private final Student student;
-    private final Classroom classroom;
+    @Id
+    private UUID id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "student_id", nullable = false)
+    private Student student;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "classroom_id", nullable = false)
+    private Classroom classroom;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private EnrollmentStatus status;
+
+    protected Enrollment() {
+    }
 
     public Enrollment(Student student, Classroom classroom) {
         this.id = UUID.randomUUID();
@@ -22,6 +40,9 @@ public class Enrollment {
     }
 
     public void confirm() {
+        if (this.status == EnrollmentStatus.CONFIRMED) {
+            return;
+        }
         if (!classroom.hasAvailableSeats()) {
             throw new IllegalStateException("No seats available");
         }
@@ -30,6 +51,9 @@ public class Enrollment {
     }
 
     public void cancel() {
+        if (this.status == EnrollmentStatus.CANCELLED) {
+            return;
+        }
         if (this.status == EnrollmentStatus.CONFIRMED) {
             classroom.releaseSeat();
         }

@@ -1,25 +1,45 @@
 package com.lyceum.academic.domain.entity;
 
 import com.lyceum.academic.domain.enums.ClassroomStatus;
-import com.lyceum.academic.domain.valueobject.SeatLimit;
 import com.lyceum.academic.domain.valueobject.EnrollmentPeriod;
+import com.lyceum.academic.domain.valueobject.SeatLimit;
+import jakarta.persistence.*;
 
-import java.util.UUID;
 import java.time.LocalDate;
+import java.util.UUID;
 
 /**
  * Represents a classroom in the academic system.
  * Each classroom has a unique identifier, a discipline, a status, a seat limit, and an enrollment period.
  */
+@Entity
+@Table(name = "classrooms")
 public class Classroom {
-    private final UUID id;
-    private final Discipline discipline;
+    @Id
+    private UUID id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "discipline_id", nullable = false)
+    private Discipline discipline;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ClassroomStatus status;
-    private final SeatLimit seatLimit;
-    private final EnrollmentPeriod enrollmentPeriod;
+
+    @Embedded
+    private SeatLimit seatLimit;
+
+    @Embedded
+    private EnrollmentPeriod enrollmentPeriod;
+
+    @Version
+    private Long version;
+
+    protected Classroom() {
+    }
 
     public Classroom(UUID id, Discipline discipline, SeatLimit seatLimit, EnrollmentPeriod enrollmentPeriod) {
-        this.id = id;
+        this.id = id == null ? UUID.randomUUID() : id;
         this.discipline = discipline;
         this.status = ClassroomStatus.OPEN;
         this.seatLimit = seatLimit;
@@ -45,4 +65,8 @@ public class Classroom {
     public UUID getId() { return id; }
     public Discipline getDiscipline() { return discipline; }
     public ClassroomStatus getStatus() { return status; }
+    public SeatLimit getSeatLimit() { return seatLimit; }
+    public EnrollmentPeriod getEnrollmentPeriod() { return enrollmentPeriod; }
+    public Long getVersion() { return version; }
+    public void setStatus(ClassroomStatus status) { this.status = status; }
 }

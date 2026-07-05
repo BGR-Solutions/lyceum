@@ -5,6 +5,8 @@ import com.lyceum.notification.repository.NotificationRepository;
 import com.lyceum.notification.sender.NotificationSender;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Service class for managing notifications.
  * This service provides methods to send notifications and interact with the notification repository.
@@ -13,16 +15,16 @@ import org.springframework.stereotype.Service;
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
-    private final NotificationSender notificationSender;
+    private final List<NotificationSender> notificationSenders;
 
     public NotificationService(NotificationRepository notificationRepository,
-                               NotificationSender notificationSender) {
+                               List<NotificationSender> notificationSenders) {
         this.notificationRepository = notificationRepository;
-        this.notificationSender = notificationSender;
+        this.notificationSenders = notificationSenders;
     }
 
     public void sendNotification(Notification notification) {
         notificationRepository.save(notification);
-        notificationSender.send(notification);
+        notificationSenders.forEach(sender -> sender.send(notification));
     }
 }
