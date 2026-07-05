@@ -17,10 +17,10 @@
     <!-- Definição centralizada de versões -->
     <properties>
         <java.version>17</java.version>
-        <spring.boot.version>3.2.5</spring.boot.version>
-        <lombok.version>1.18.32</lombok.version>
-        <postgres.version>42.7.3</postgres.version>
-        <flyway.version>10.15.0</flyway.version>
+        <spring.boot.version>3.5.3</spring.boot.version>
+        <lombok.version>1.18.36</lombok.version>
+        <postgres.version>42.7.5</postgres.version>
+        <flyway.version>11.3.0</flyway.version>
     </properties>
 
     <dependencyManagement>
@@ -32,7 +32,7 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <!-- Flyway 10.x: sobrescreve o 9.x gerenciado pelo Spring Boot 3.2.x -->
+            <!-- Flyway 11.x: pin explícito para garantir consistência entre módulos -->
             <dependency>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-core</artifactId>
@@ -42,6 +42,18 @@
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-database-postgresql</artifactId>
                 <version>${flyway.version}</version>
+            </dependency>
+            <!-- PostgreSQL driver: controle explícito de versão -->
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${postgres.version}</version>
+            </dependency>
+            <!-- Lombok: controle explícito de versão -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -59,7 +71,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.11.0</version>
+                    <version>3.13.0</version>
                     <configuration>
                         <source>${java.version}</source>
                         <target>${java.version}</target>
