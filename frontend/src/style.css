@@ -1,0 +1,45 @@
+:root {
+  font-family: Inter, Arial, sans-serif;
+  color: #222;
+  background: #f7f7f7;
+}
+
+body {
+  margin: 0;
+}
+
+#app {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+section {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+input, select, button {
+  margin-right: 8px;
+  margin-bottom: 8px;
+  padding: 8px;
+}
+
+button {
+  cursor: pointer;
+}
+
+pre {
+  background: #111;
+  color: #0f0;
+  padding: 12px;
+  min-height: 80px;
+}
+
+.hint {
+  margin-top: -8px;
+  color: #555;
+}

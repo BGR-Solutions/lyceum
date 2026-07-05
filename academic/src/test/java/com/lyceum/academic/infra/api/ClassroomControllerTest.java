@@ -1,6 +1,7 @@
 package com.lyceum.academic.infra.api;
 
 import com.lyceum.academic.application.ports.ClassroomRepository;
+import com.lyceum.academic.application.service.CrudService;
 import com.lyceum.academic.domain.entity.Classroom;
 import com.lyceum.academic.domain.entity.Discipline;
 import com.lyceum.academic.domain.valueobject.EnrollmentPeriod;
@@ -24,6 +25,8 @@ class ClassroomControllerTest {
 
     @Mock
     private ClassroomRepository classroomRepository;
+    @Mock
+    private CrudService crudService;
 
     @InjectMocks
     private ClassroomController controller;

@@ -11,6 +11,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,7 +28,7 @@ class RabbitMqEventPublisherTest {
 
         publisher.publish(event);
 
-        verify(rabbitTemplate).convertAndSend("enrollment.events", event);
+        verify(rabbitTemplate).convertAndSend(eq("enrollment.events.exchange"), eq("enrollment.events"), any(Object.class));
     }
 
     @Test
@@ -36,7 +38,7 @@ class RabbitMqEventPublisherTest {
 
         publisher.publish(event);
 
-        verify(rabbitTemplate).convertAndSend("enrollment.events", event);
+        verify(rabbitTemplate).convertAndSend(eq("enrollment.events.exchange"), eq("enrollment.events"), any(Object.class));
     }
 
     @Test
@@ -46,6 +48,6 @@ class RabbitMqEventPublisherTest {
 
         publisher.publish(event);
 
-        verify(rabbitTemplate).convertAndSend("enrollment.events", event);
+        verify(rabbitTemplate).convertAndSend(eq("enrollment.events.exchange"), eq("enrollment.events"), any(Object.class));
     }
 }

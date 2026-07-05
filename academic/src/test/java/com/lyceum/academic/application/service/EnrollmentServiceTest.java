@@ -13,6 +13,7 @@ import com.lyceum.academic.domain.entity.Student;
 import com.lyceum.academic.domain.enums.EnrollmentStatus;
 import com.lyceum.academic.domain.valueobject.EnrollmentPeriod;
 import com.lyceum.academic.domain.valueobject.SeatLimit;
+import com.lyceum.academic.infra.adapters.repository.StudentRepositoryJpa;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,12 +40,14 @@ class EnrollmentServiceTest {
     private ClassroomRepository classroomRepository;
     @Mock
     private EventPublisher eventPublisher;
+    @Mock
+    private StudentRepositoryJpa studentRepository;
 
     private EnrollmentService service;
 
     @BeforeEach
     void setUp() {
-        service = new EnrollmentService(enrollmentRepository, classroomRepository, eventPublisher);
+        service = new EnrollmentService(enrollmentRepository, classroomRepository, eventPublisher, studentRepository);
     }
 
     @Test
@@ -84,13 +87,14 @@ class EnrollmentServiceTest {
                 new EnrollmentPeriod(LocalDate.now().minusDays(1), LocalDate.now().plusDays(1))
         );
         when(classroomRepository.findById(classroom.getId())).thenReturn(Optional.of(classroom));
+        when(studentRepository.findById(studentId)).thenReturn(Optional.of(new Student(studentId, "Alice")));
         when(enrollmentRepository.save(any(Enrollment.class))).thenAnswer(invocation -> invocation.getArgument(0));
         doNothing().when(eventPublisher).publish(any(com.lyceum.academic.domain.event.EnrollmentCreated.class));
 
         Enrollment created = service.createEnrollment(new CreateEnrollmentCommand(studentId, classroom.getId()));
 
         assertEquals(studentId, created.getStudent().getId());
-        assertEquals("Unknown", created.getStudent().getName());
+        assertEquals("Alice", created.getStudent().getName());
         verify(enrollmentRepository).save(any(Enrollment.class));
         verify(eventPublisher).publish(any(com.lyceum.academic.domain.event.EnrollmentCreated.class));
     }
@@ -110,6 +114,7 @@ class EnrollmentServiceTest {
     void confirmEnrollmentConfirmsEnrollmentPersistsAndPublishesEvent() {
         Enrollment enrollment = new Enrollment(new Student(UUID.randomUUID(), "Alice"), buildClassroom(1));
         when(enrollmentRepository.findById(enrollment.getId())).thenReturn(Optional.of(enrollment));
+        when(classroomRepository.findByIdForUpdate(enrollment.getClassroom().getId())).thenReturn(Optional.of(enrollment.getClassroom()));
         when(enrollmentRepository.save(enrollment)).thenReturn(enrollment);
         doNothing().when(eventPublisher).publish(any(com.lyceum.academic.domain.event.EnrollmentConfirmed.class));
 
@@ -135,6 +140,7 @@ class EnrollmentServiceTest {
     void cancelEnrollmentCancelsEnrollmentPersistsAndPublishesEvent() {
         Enrollment enrollment = new Enrollment(new Student(UUID.randomUUID(), "Alice"), buildClassroom(1));
         when(enrollmentRepository.findById(enrollment.getId())).thenReturn(Optional.of(enrollment));
+        when(classroomRepository.findByIdForUpdate(enrollment.getClassroom().getId())).thenReturn(Optional.of(enrollment.getClassroom()));
         when(enrollmentRepository.save(enrollment)).thenReturn(enrollment);
         doNothing().when(eventPublisher).publish(any(com.lyceum.academic.domain.event.EnrollmentCancelled.class));
 
