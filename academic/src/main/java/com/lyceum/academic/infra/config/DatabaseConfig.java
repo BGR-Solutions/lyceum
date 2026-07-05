@@ -1,7 +1,6 @@
-package com.lyceum.academic.config;
+package com.lyceum.academic.infra.config;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
 /**
  * Configuration class for database-related beans and settings.

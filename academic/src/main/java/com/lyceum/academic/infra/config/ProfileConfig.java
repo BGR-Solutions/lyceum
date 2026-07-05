@@ -1,4 +1,4 @@
-package com.lyceum.academic.config;
+package com.lyceum.academic.infra.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

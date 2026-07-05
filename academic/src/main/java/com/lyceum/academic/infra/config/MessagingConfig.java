@@ -1,4 +1,4 @@
-package com.lyceum.academic.config;
+package com.lyceum.academic.infra.config;
 
 import org.springframework.amqp.core.Queue;
 import org.springframework.context.annotation.Bean;
