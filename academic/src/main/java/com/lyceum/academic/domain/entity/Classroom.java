@@ -3,6 +3,7 @@ package com.lyceum.academic.domain.entity;
 import com.lyceum.academic.domain.enums.ClassroomStatus;
 import com.lyceum.academic.domain.valueobject.EnrollmentPeriod;
 import com.lyceum.academic.domain.valueobject.SeatLimit;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -14,6 +15,7 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "classrooms")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Classroom {
     @Id
     private UUID id;

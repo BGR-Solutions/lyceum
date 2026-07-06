@@ -1,10 +1,11 @@
 export const apiBase = (import.meta.env.VITE_API_BASE as string) || 'http://localhost:8080'
 
 export const request = async (path: string, options: RequestInit = {}): Promise<any> => {
+  const hasBody = options.method && options.method !== 'GET' && options.method !== 'HEAD'
   const response = await fetch(`${apiBase}${path}`, {
     ...options,
     headers: {
-      'Content-Type': 'application/json',
+      ...(hasBody ? { 'Content-Type': 'application/json' } : {}),
       ...(options.headers || {}),
     },
   })

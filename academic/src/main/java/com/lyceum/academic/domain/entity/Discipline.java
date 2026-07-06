@@ -1,5 +1,6 @@
 package com.lyceum.academic.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.UUID;
@@ -10,6 +11,7 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "disciplines")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Discipline {
     @Id
     private UUID id;

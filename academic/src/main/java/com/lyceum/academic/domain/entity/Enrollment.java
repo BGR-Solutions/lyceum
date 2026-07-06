@@ -1,6 +1,7 @@
 package com.lyceum.academic.domain.entity;
 
 import com.lyceum.academic.domain.enums.EnrollmentStatus;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.UUID;
@@ -13,6 +14,7 @@ import java.util.UUID;
 @Table(name = "enrollments", uniqueConstraints = {
         @UniqueConstraint(name = "uk_enrollment_student_classroom", columnNames = {"student_id", "classroom_id"})
 })
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Enrollment {
     @Id
     private UUID id;
