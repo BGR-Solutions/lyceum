@@ -29,6 +29,7 @@ services:
       - postgres
       - rabbitmq
     environment:
+      DB_HOST: postgres
       DB_USER: postgres
       DB_PASS: postgres
       RABBIT_HOST: rabbitmq
@@ -45,6 +46,7 @@ services:
       - postgres
       - rabbitmq
     environment:
+      DB_HOST: postgres
       DB_USER: postgres
       DB_PASS: postgres
       RABBIT_HOST: rabbitmq

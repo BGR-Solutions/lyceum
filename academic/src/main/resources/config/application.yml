@@ -4,7 +4,7 @@ spring:
   application:
     name: academic-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/academicdb
+    url: jdbc:postgresql://${DB_HOST:localhost}:5432/academicdb
     username: ${DB_USER:postgres}
     password: ${DB_PASS:postgres}
     driver-class-name: org.postgresql.Driver
