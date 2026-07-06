@@ -82,6 +82,9 @@ services:
     image: prom/prometheus:latest
     container_name: lyceum_prometheus
     volumes:
-      - ./prometheus.yml
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      academic:
+        condition: service_healthy  
     ports:
       - "9090:9090"
