@@ -14,6 +14,7 @@ import com.lyceum.academic.domain.enums.EnrollmentStatus;
 import com.lyceum.academic.domain.valueobject.EnrollmentPeriod;
 import com.lyceum.academic.domain.valueobject.SeatLimit;
 import com.lyceum.academic.infra.adapters.repository.StudentRepositoryJpa;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,7 +51,8 @@ class EnrollmentServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new EnrollmentService(enrollmentRepository, classroomRepository, eventPublisher, studentRepository);
+        service = new EnrollmentService(enrollmentRepository, classroomRepository, eventPublisher, studentRepository,
+                new SimpleMeterRegistry());
     }
 
     @Test

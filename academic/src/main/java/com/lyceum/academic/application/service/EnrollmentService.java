@@ -12,6 +12,10 @@ import com.lyceum.academic.domain.event.EnrollmentCancelled;
 import com.lyceum.academic.domain.event.EnrollmentConfirmed;
 import com.lyceum.academic.domain.event.EnrollmentCreated;
 import com.lyceum.academic.infra.adapters.repository.StudentRepositoryJpa;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,19 +30,32 @@ import java.util.UUID;
 @Service
 public class EnrollmentService {
 
+    private static final Logger log = LoggerFactory.getLogger(EnrollmentService.class);
+
     private final EnrollmentRepository enrollmentRepository;
     private final ClassroomRepository classroomRepository;
     private final EventPublisher eventPublisher;
     private final StudentRepositoryJpa studentRepository;
 
+    private final Counter enrollmentsCreated;
+    private final Counter enrollmentsConfirmed;
+    private final Counter enrollmentsCancelled;
+    private final Counter enrollmentsRejectedNoSeats;
+
     public EnrollmentService(EnrollmentRepository enrollmentRepository,
                              ClassroomRepository classroomRepository,
                              EventPublisher eventPublisher,
-                             StudentRepositoryJpa studentRepository) {
+                             StudentRepositoryJpa studentRepository,
+                             MeterRegistry meterRegistry) {
         this.enrollmentRepository = enrollmentRepository;
         this.classroomRepository = classroomRepository;
         this.eventPublisher = eventPublisher;
         this.studentRepository = studentRepository;
+
+        this.enrollmentsCreated      = meterRegistry.counter("enrollment.created");
+        this.enrollmentsConfirmed    = meterRegistry.counter("enrollment.confirmed");
+        this.enrollmentsCancelled    = meterRegistry.counter("enrollment.cancelled");
+        this.enrollmentsRejectedNoSeats = meterRegistry.counter("enrollment.rejected.no_seats");
     }
 
     @Transactional
@@ -66,6 +83,10 @@ public class EnrollmentService {
                 saved.getClassroom().getId()
         ));
 
+        enrollmentsCreated.increment();
+        log.info("Enrollment created: enrollmentId={} studentId={} classroomId={}",
+                saved.getId(), saved.getStudent().getId(), saved.getClassroom().getId());
+
         return saved;
     }
 
@@ -81,7 +102,15 @@ public class EnrollmentService {
             throw new IllegalStateException("Enrollment period is closed");
         }
 
-        enrollment.confirm();
+        try {
+            enrollment.confirm();
+        } catch (IllegalStateException ex) {
+            enrollmentsRejectedNoSeats.increment();
+            log.warn("Enrollment confirmation rejected — no seats available: enrollmentId={} classroomId={}",
+                    enrollment.getId(), lockedClassroom.getId());
+            throw ex;
+        }
+
         Enrollment saved = enrollmentRepository.save(enrollment);
 
         eventPublisher.publish(new EnrollmentConfirmed(
@@ -89,6 +118,12 @@ public class EnrollmentService {
                 saved.getStudent().getId(),
                 saved.getClassroom().getId()
         ));
+
+        enrollmentsConfirmed.increment();
+        log.info("Enrollment confirmed: enrollmentId={} studentId={} classroomId={} occupiedSeats={}/{}",
+                saved.getId(), saved.getStudent().getId(), saved.getClassroom().getId(),
+                lockedClassroom.getSeatLimit().getOccupiedSeats(),
+                lockedClassroom.getSeatLimit().getMaxSeats());
 
         return saved;
     }
@@ -109,6 +144,10 @@ public class EnrollmentService {
                 saved.getStudent().getId(),
                 saved.getClassroom().getId()
         ));
+
+        enrollmentsCancelled.increment();
+        log.info("Enrollment cancelled: enrollmentId={} studentId={} classroomId={}",
+                saved.getId(), saved.getStudent().getId(), saved.getClassroom().getId());
 
         return saved;
     }

@@ -13,6 +13,7 @@ import com.lyceum.academic.domain.event.EnrollmentConfirmed;
 import com.lyceum.academic.domain.valueobject.EnrollmentPeriod;
 import com.lyceum.academic.domain.valueobject.SeatLimit;
 import com.lyceum.academic.infra.adapters.repository.StudentRepositoryJpa;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
@@ -63,7 +64,8 @@ class EnrollmentSeatConsistencyTest {
     @BeforeEach
     void setUp() {
         service = new EnrollmentService(
-                enrollmentRepository, classroomRepository, eventPublisher, studentRepository);
+                enrollmentRepository, classroomRepository, eventPublisher, studentRepository,
+                new SimpleMeterRegistry());
     }
 
     // ------------------------------------------------------------------ //
