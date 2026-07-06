@@ -9,6 +9,11 @@ services:
       - "5432:5432"
     volumes:
       - ./docker/initdb:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -19,6 +24,11 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   academic:
     build:
@@ -26,8 +36,10 @@ services:
       dockerfile: academic/Dockerfile
     container_name: lyceum_academic
     depends_on:
-      - postgres
-      - rabbitmq
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     environment:
       DB_HOST: postgres
       DB_USER: postgres
@@ -43,8 +55,10 @@ services:
       dockerfile: notification/Dockerfile
     container_name: lyceum_notification
     depends_on:
-      - postgres
-      - rabbitmq
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     environment:
       DB_HOST: postgres
       DB_USER: postgres

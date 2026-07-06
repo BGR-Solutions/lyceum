@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -72,6 +73,34 @@ class EnrollmentControllerTest {
         ArgumentCaptor<com.lyceum.academic.application.command.CancelEnrollmentCommand> captor = ArgumentCaptor.forClass(com.lyceum.academic.application.command.CancelEnrollmentCommand.class);
         verify(enrollmentService).cancelEnrollment(captor.capture());
         assertEquals(enrollmentId, captor.getValue().getEnrollmentId());
+    }
+
+    // --- Regra: consulta de matrículas por aluno ---
+
+    @Test
+    void getByStudentDelegatesToService() {
+        UUID studentId = UUID.randomUUID();
+        List<Enrollment> expected = List.of(buildEnrollment());
+        when(enrollmentService.findByStudent(studentId)).thenReturn(expected);
+
+        List<Enrollment> result = controller.getByStudent(studentId);
+
+        assertEquals(expected, result);
+        verify(enrollmentService).findByStudent(studentId);
+    }
+
+    // --- Regra: consulta de matrículas por turma ---
+
+    @Test
+    void getByClassroomDelegatesToService() {
+        UUID classroomId = UUID.randomUUID();
+        List<Enrollment> expected = List.of(buildEnrollment());
+        when(enrollmentService.findByClassroom(classroomId)).thenReturn(expected);
+
+        List<Enrollment> result = controller.getByClassroom(classroomId);
+
+        assertEquals(expected, result);
+        verify(enrollmentService).findByClassroom(classroomId);
     }
 
     private static Enrollment buildEnrollment() {

@@ -7,19 +7,20 @@
 ## 01 Instruções gerais
 ---
 
-1. O repositório deve conter um README contendo instruções de execução, testes. tecnologias utilizadas, principais decisôes técnicas e uso de IA.
-2. A solução precisa ser executável de forma reproduzível. O Docker Compose deve subir aplicação, banco e mensageria.
+1. O repositório deve conter um README contendo instruções de execução, testes. tecnologias utilizadas, principais decisôes técnicas e uso de IA (será o último item).
+2. A solução precisa ser executável de forma reproduzível. O Docker Compose deve subir aplicação, banco e mensageria (funcionando via Docker Composer).
 
 ## 02 Desafio funcional
 ---
 
 Desenvolva uma solução para gestão de matrículas acadêmicas. A solução deve permitir cadastrar alunos, cursos, disciplinas e turmas, além de controlar matrículas com regras de negócio claras.
+
 ### Entidades sugeridas
-- Aluno
-- Curso
-- Disciplina
-- Turma
-- Matrícula
+- Aluno (Ok)
+- Curso (Ok)
+- Disciplina (Ok)
+- Turma (Ok)
+- Matrícula (Ok)
 
 ### Regras de negócio mínimas
 - Um aluno só pode ser matriculado em turmas abertas.
@@ -33,8 +34,7 @@ Desenvolva uma solução para gestão de matrículas acadêmicas. A solução de
 ## 03 Base técnica obrigatória
 ---
 
-A entrega deve contemplar os requisitos funcionais e técnicos de base esperados
-para uma aplicação sustentável.
+A entrega deve contemplar os requisitos funcionais e técnicos de base esperados para uma aplicação sustentável.
 
 | Área | Expectativa |
 |---|---|
@@ -50,8 +50,7 @@ para uma aplicação sustentável.
 ## 04 Requisitos específicos
 ---
 
-Objetivo: avaliar arquitetura, desacoplamento, mensageria, consistência, observabilidade, testes, tomada de
-decisão e capacidade de evolução técnica.
+Objetivo: avaliar arquitetura, desacoplamento, mensageria, consistência, observabilidade, testes, tomada de decisão e capacidade de evolução técnica.
 - Solução modular ou baseada em mais de um serviço.
 - Separação clara entre contexto acadêmico e contexto de notificações, auditoria ou relatórios.
 - Comunicação assíncrona usando RabbitMQ, Kafka, Redis ou tecnologia equivalente.
@@ -61,10 +60,8 @@ decisão e capacidade de evolução técnica.
 - Preocupação explícita com concorrência na matrícula.
 - Testes unitários e de integração nas regras críticas.
 - Docker Compose subindo aplicação, banco de dados e mensageria.
-- Observabilidade mínima: logs estruturados, correlation ID ou trace ID, health checks e métricas básicas
-quando possível.
-- Documentação arquitetural curta explicando decisões, trade-offs, riscos conhecidos, evolução da solução e
-tratamento de falhas na mensageria.
+- Observabilidade mínima: logs estruturados, correlation ID ou trace ID, health checks e métricas básicas quando possível.
+- Documentação arquitetural curta explicando decisões, trade-offs, riscos conhecidos, evolução da solução e tratamento de falhas na mensageria.
 - README completo.
 
 ### Resumo do que é esperado no repositório
@@ -74,13 +71,11 @@ tratamento de falhas na mensageria.
 - Eventos de domínio publicados e consumidos.
 - Controle de concorrência nas vagas.
 - Logs estruturados e correlation ID ou trace ID.
-- Documentação arquitetural com decisões e trade-
-offs.
+- Documentação arquitetural com decisões e trade-offs.
 - Arquitetura coesa e justificada.
 - Separação real de contextos.
 - Tratamento de falhas na mensageria.
-- Consistência entre README, arquitetura e
-implementação.
+- Consistência entre README, arquitetura e implementação.
 - Clareza na evolução prevista da solução.
 
 ## 05 README esperado
@@ -97,8 +92,7 @@ O README é parte essencial da avaliação.
 - Como os eventos de domínio são publicados e consumidos.
 - Como a solução trata falhas na mensageria.
 - Quais logs, health checks, métricas ou mecanismos de rastreabilidade foram implementados.
-- Quais ferramentas de IA foram utilizadas, em quais partes, o que foi revisado manualmente e quais trechos
-são mais críticos.
+- Quais ferramentas de IA foram utilizadas, em quais partes, o que foi revisado manualmente e quais trechos são mais críticos.
 
 ## 06 Critérios de aceite
 ---
