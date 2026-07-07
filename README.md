@@ -78,8 +78,8 @@ mvn -pl notification test
 ## Como a solução trata concorrência na matrícula
 
 - `@Transactional` em casos de uso críticos.
-- Busca da turma com `PESSIMISTIC_WRITE` (`findByIdForUpdate`).
-- Restrição de unicidade no banco para evitar matrícula duplicada por aluno+turma.
+- Busca da turma com `PESSIMISTIC_WRITE` (`findByIdForUpdate`), serializando o acesso ao contador de vagas.
+- Validação de duplicidade ativa no serviço via `existsByStudentIdAndClassroomIdAndStatusNot`, ignorando matrículas canceladas e permitindo rematrícula.
 
 ## Como os eventos de domínio são publicados e consumidos
 
