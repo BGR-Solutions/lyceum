@@ -38,6 +38,5 @@ CREATE TABLE IF NOT EXISTS enrollments (
     status       VARCHAR(50) NOT NULL,
     CONSTRAINT pk_enrollments PRIMARY KEY (id),
     CONSTRAINT fk_enrollments_student FOREIGN KEY (student_id) REFERENCES students (id),
-    CONSTRAINT fk_enrollments_classroom FOREIGN KEY (classroom_id) REFERENCES classrooms (id),
-    CONSTRAINT uk_enrollment_student_classroom UNIQUE (student_id, classroom_id)
+    CONSTRAINT fk_enrollments_classroom FOREIGN KEY (classroom_id) REFERENCES classrooms (id)
 );

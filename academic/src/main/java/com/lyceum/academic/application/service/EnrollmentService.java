@@ -60,7 +60,7 @@ public class EnrollmentService {
 
     @Transactional
     public Enrollment createEnrollment(CreateEnrollmentCommand command) {
-        if (enrollmentRepository.existsByStudentIdAndClassroomId(command.getStudentId(), command.getClassroomId())) {
+        if (enrollmentRepository.existsByStudentIdAndClassroomIdAndStatusNot(command.getStudentId(), command.getClassroomId(), com.lyceum.academic.domain.enums.EnrollmentStatus.CANCELLED)) {
             throw new IllegalStateException("Student already enrolled in classroom");
         }
 

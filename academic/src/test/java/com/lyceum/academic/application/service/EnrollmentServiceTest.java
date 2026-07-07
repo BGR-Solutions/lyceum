@@ -163,7 +163,7 @@ class EnrollmentServiceTest {
     void createEnrollmentThrowsWhenStudentAlreadyEnrolled() {
         UUID studentId = UUID.randomUUID();
         UUID classroomId = UUID.randomUUID();
-        when(enrollmentRepository.existsByStudentIdAndClassroomId(studentId, classroomId)).thenReturn(true);
+        when(enrollmentRepository.existsByStudentIdAndClassroomIdAndStatusNot(studentId, classroomId, EnrollmentStatus.CANCELLED)).thenReturn(true);
 
         IllegalStateException ex = assertThrows(IllegalStateException.class,
                 () -> service.createEnrollment(new CreateEnrollmentCommand(studentId, classroomId)));
@@ -177,7 +177,7 @@ class EnrollmentServiceTest {
     void createEnrollmentThrowsWhenStudentNotFound() {
         UUID studentId = UUID.randomUUID();
         Classroom classroom = buildClassroom(5);
-        when(enrollmentRepository.existsByStudentIdAndClassroomId(studentId, classroom.getId())).thenReturn(false);
+        when(enrollmentRepository.existsByStudentIdAndClassroomIdAndStatusNot(studentId, classroom.getId(), EnrollmentStatus.CANCELLED)).thenReturn(false);
         when(classroomRepository.findByIdForUpdate(classroom.getId())).thenReturn(Optional.of(classroom));
         when(studentRepository.findById(studentId)).thenReturn(Optional.empty());
 

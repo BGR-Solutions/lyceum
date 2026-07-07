@@ -181,11 +181,6 @@ pre {
   color: #888;
 }
 
-.badge.full {
-  background: #fde8e8;
-  color: #9b1c1c;
-}
-
 .enroll-btn {
   padding: 6px 14px;
   background: #0066cc;
@@ -205,12 +200,24 @@ pre {
   cursor: not-allowed;
 }
 
-.enroll-btn--full {
-  background: #c05000;
+.cancel-btn {
+  padding: 6px 14px;
+  background: #fff;
+  color: #c00;
+  border: 1px solid #c00;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  margin-left: 8px;
 }
 
-.enroll-btn--full:hover:not(:disabled) {
-  background: #a04000;
+.cancel-btn:hover:not(:disabled) {
+  background: #fde8e8;
+}
+
+.cancel-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .empty-msg {

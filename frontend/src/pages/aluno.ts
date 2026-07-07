@@ -27,15 +27,10 @@ interface Student {
 let allDisciplines: Discipline[] = []
 let allClassrooms: Classroom[] = []
 let enrolledDisciplineIds: Set<string> = new Set()
+let enrollmentIdByDisciplineId: Map<string, string> = new Map()
 let selectedStudentId = ''
 let nameFilter = ''
 let showOnlyEnrolled = false
-let allowFullClassroomEnroll = false
-
-const isClassroomFull = (c: Classroom): boolean => {
-  const sl = c.seatLimit
-  return !!sl && sl.occupiedSeats >= sl.maxSeats
-}
 
 const buildDisciplineToClassroomsMap = (): Map<string, Classroom[]> => {
   const map = new Map<string, Classroom[]>()
@@ -76,18 +71,17 @@ const renderDisciplineList = () => {
       const hasClassroom = classrooms.length > 0
       const course = d.course?.name ? `<span class="course-tag">${d.course.name}</span>` : ''
 
-      const allFull = classrooms.length > 0 && classrooms.every(isClassroomFull)
-
       let actionBtn: string
       if (isEnrolled) {
-        actionBtn = `<span class="badge enrolled">Matriculado</span>`
+        const enrollmentId = enrollmentIdByDisciplineId.get(d.id) ?? ''
+        actionBtn = `
+          <span class="badge enrolled">Matriculado</span>
+          <button class="cancel-btn" data-enrollment-id="${enrollmentId}" data-discipline-id="${d.id}">Cancelar matrícula</button>
+        `
       } else if (!hasClassroom) {
         actionBtn = `<span class="badge no-class">Sem turma disponível</span>`
-      } else if (allFull && !allowFullClassroomEnroll) {
-        actionBtn = `<span class="badge full">Turma Cheia</span>`
       } else {
-        const fullCls = allFull ? ' enroll-btn--full' : ''
-        actionBtn = `<button class="enroll-btn${fullCls}" data-discipline-id="${d.id}">Matricular</button>`
+        actionBtn = `<button class="enroll-btn" data-discipline-id="${d.id}">Matricular</button>`
       }
 
       return `
@@ -105,6 +99,14 @@ const renderDisciplineList = () => {
     btn.addEventListener('click', async () => {
       const disciplineId = btn.dataset.disciplineId!
       await enrollStudentInDiscipline(disciplineId, btn)
+    })
+  })
+
+  list.querySelectorAll<HTMLButtonElement>('.cancel-btn').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const enrollmentId = btn.dataset.enrollmentId!
+      const disciplineId = btn.dataset.disciplineId!
+      await cancelStudentEnrollment(enrollmentId, disciplineId, btn)
     })
   })
 }
@@ -129,29 +131,42 @@ const enrollStudentInDiscipline = async (disciplineId: string, btn: HTMLButtonEl
     return
   }
 
-  if (classrooms.every(isClassroomFull)) {
-    setStatus('Turma cheia: não há vagas disponíveis para esta disciplina.', 'error')
-    return
-  }
-
-  const classroom = classrooms.find((c) => !isClassroomFull(c)) ?? classrooms[0]
+  const classroom = classrooms[0]
   try {
     btn.disabled = true
-    await request('/enrollments', {
+    const enrollment = await request('/enrollments', {
       method: 'POST',
       body: JSON.stringify({ studentId: selectedStudentId, classroomId: classroom.id }),
     })
     enrolledDisciplineIds.add(disciplineId)
+    enrollmentIdByDisciplineId.set(disciplineId, enrollment.id)
     setStatus('Matrícula realizada com sucesso!', 'success')
     allClassrooms = await request('/classrooms')
     renderDisciplineList()
   } catch (err) {
-    const msg = String(err).toLowerCase()
-    const isFull = msg.includes('seat') || msg.includes('vaga') || msg.includes('no seats')
-    setStatus(
-      isFull ? 'Turma cheia: não há vagas disponíveis.' : String(err),
-      'error',
-    )
+    setStatus(String(err), 'error')
+    btn.disabled = false
+  }
+}
+
+const cancelStudentEnrollment = async (enrollmentId: string, disciplineId: string, btn: HTMLButtonElement) => {
+  const statusEl = document.getElementById('studentStatus')
+  const setStatus = (msg: string, type: 'error' | 'success' | '') => {
+    if (!statusEl) return
+    statusEl.textContent = msg
+    statusEl.className = `status-msg${type ? ` ${type}` : ''}`
+  }
+
+  try {
+    btn.disabled = true
+    await request(`/enrollments/${enrollmentId}/cancel`, { method: 'POST' })
+    enrolledDisciplineIds.delete(disciplineId)
+    enrollmentIdByDisciplineId.delete(disciplineId)
+    setStatus('Matrícula cancelada com sucesso!', 'success')
+    allClassrooms = await request('/classrooms')
+    renderDisciplineList()
+  } catch (err) {
+    setStatus(String(err), 'error')
     btn.disabled = false
   }
 }
@@ -168,10 +183,18 @@ const loadStudentData = async (studentId: string) => {
     if (statusEl) statusEl.textContent = 'Carregando...'
     const enrollments: Enrollment[] = await request(`/enrollments/by-student/${studentId}`)
 
+    const activeEnrollments = enrollments.filter((e) => e.status !== 'CANCELLED')
+
     enrolledDisciplineIds = new Set(
-      enrollments
+      activeEnrollments
         .map((e) => e.classroom?.discipline?.id)
         .filter((id): id is string => Boolean(id)),
+    )
+
+    enrollmentIdByDisciplineId = new Map(
+      activeEnrollments
+        .filter((e) => e.classroom?.discipline?.id)
+        .map((e) => [e.classroom!.discipline!.id, e.id]),
     )
 
     if (statusEl) statusEl.textContent = ''
@@ -199,10 +222,7 @@ export async function renderAluno(container: HTMLElement): Promise<void> {
           <input id="enrolledFilter" type="checkbox" />
           Apenas matriculadas
         </label>
-        <label class="filter-toggle flag-toggle" title="Habilitar para demonstrar o tratamento de erro em turmas cheias">
-          <input id="fullClassroomFlag" type="checkbox" />
-          Habilitar matrícula em turmas cheias
-        </label>
+
       </div>
       <ul id="disciplineList" class="discipline-list">
         <li class="empty-msg">Selecione um aluno para ver as disciplinas.</li>
@@ -216,10 +236,10 @@ export async function renderAluno(container: HTMLElement): Promise<void> {
   allDisciplines = []
   allClassrooms = []
   enrolledDisciplineIds = new Set()
+  enrollmentIdByDisciplineId = new Map()
   selectedStudentId = ''
   nameFilter = ''
   showOnlyEnrolled = false
-  allowFullClassroomEnroll = false
 
   try {
     const [students, disciplines, classrooms] = await Promise.all([
@@ -259,9 +279,4 @@ export async function renderAluno(container: HTMLElement): Promise<void> {
     renderDisciplineList()
   })
 
-  const fullClassroomFlag = document.getElementById('fullClassroomFlag') as HTMLInputElement
-  fullClassroomFlag.addEventListener('change', () => {
-    allowFullClassroomEnroll = fullClassroomFlag.checked
-    renderDisciplineList()
-  })
 }

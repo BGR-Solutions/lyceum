@@ -11,9 +11,7 @@ import java.util.UUID;
  * Each enrollment has a unique identifier, a student, a classroom, and a status.
  */
 @Entity
-@Table(name = "enrollments", uniqueConstraints = {
-        @UniqueConstraint(name = "uk_enrollment_student_classroom", columnNames = {"student_id", "classroom_id"})
-})
+@Table(name = "enrollments")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Enrollment {
     @Id
