@@ -10,6 +10,7 @@ interface Classroom {
   id: string
   discipline?: { id: string; name: string }
   status?: string
+  seatLimit?: { maxSeats: number; occupiedSeats: number }
 }
 
 interface Enrollment {
@@ -29,6 +30,12 @@ let enrolledDisciplineIds: Set<string> = new Set()
 let selectedStudentId = ''
 let nameFilter = ''
 let showOnlyEnrolled = false
+let allowFullClassroomEnroll = false
+
+const isClassroomFull = (c: Classroom): boolean => {
+  const sl = c.seatLimit
+  return !!sl && sl.occupiedSeats >= sl.maxSeats
+}
 
 const buildDisciplineToClassroomsMap = (): Map<string, Classroom[]> => {
   const map = new Map<string, Classroom[]>()
@@ -69,11 +76,19 @@ const renderDisciplineList = () => {
       const hasClassroom = classrooms.length > 0
       const course = d.course?.name ? `<span class="course-tag">${d.course.name}</span>` : ''
 
-      const actionBtn = isEnrolled
-        ? `<span class="badge enrolled">Matriculado</span>`
-        : hasClassroom
-          ? `<button class="enroll-btn" data-discipline-id="${d.id}">Matricular</button>`
-          : `<span class="badge no-class">Sem turma disponível</span>`
+      const allFull = classrooms.length > 0 && classrooms.every(isClassroomFull)
+
+      let actionBtn: string
+      if (isEnrolled) {
+        actionBtn = `<span class="badge enrolled">Matriculado</span>`
+      } else if (!hasClassroom) {
+        actionBtn = `<span class="badge no-class">Sem turma disponível</span>`
+      } else if (allFull && !allowFullClassroomEnroll) {
+        actionBtn = `<span class="badge full">Turma Cheia</span>`
+      } else {
+        const fullCls = allFull ? ' enroll-btn--full' : ''
+        actionBtn = `<button class="enroll-btn${fullCls}" data-discipline-id="${d.id}">Matricular</button>`
+      }
 
       return `
         <li class="discipline-item">
@@ -96,30 +111,46 @@ const renderDisciplineList = () => {
 
 const enrollStudentInDiscipline = async (disciplineId: string, btn: HTMLButtonElement) => {
   const statusEl = document.getElementById('studentStatus')
+  const setStatus = (msg: string, type: 'error' | 'success' | '') => {
+    if (!statusEl) return
+    statusEl.textContent = msg
+    statusEl.className = `status-msg${type ? ` ${type}` : ''}`
+  }
+
   if (!selectedStudentId) {
-    if (statusEl) statusEl.textContent = 'Selecione um aluno primeiro.'
+    setStatus('Selecione um aluno primeiro.', 'error')
     return
   }
 
   const discToClassrooms = buildDisciplineToClassroomsMap()
   const classrooms = discToClassrooms.get(disciplineId) || []
   if (classrooms.length === 0) {
-    if (statusEl) statusEl.textContent = 'Nenhuma turma disponível para esta disciplina.'
+    setStatus('Nenhuma turma disponível para esta disciplina.', 'error')
     return
   }
 
-  const classroomId = classrooms[0].id
+  if (classrooms.every(isClassroomFull)) {
+    setStatus('Turma cheia: não há vagas disponíveis para esta disciplina.', 'error')
+    return
+  }
+
+  const classroom = classrooms.find((c) => !isClassroomFull(c)) ?? classrooms[0]
   try {
     btn.disabled = true
     await request('/enrollments', {
       method: 'POST',
-      body: JSON.stringify({ studentId: selectedStudentId, classroomId }),
+      body: JSON.stringify({ studentId: selectedStudentId, classroomId: classroom.id }),
     })
     enrolledDisciplineIds.add(disciplineId)
-    if (statusEl) statusEl.textContent = 'Matrícula realizada com sucesso!'
+    setStatus('Matrícula realizada com sucesso!', 'success')
     renderDisciplineList()
   } catch (err) {
-    if (statusEl) statusEl.textContent = String(err)
+    const msg = String(err).toLowerCase()
+    const isFull = msg.includes('seat') || msg.includes('vaga') || msg.includes('no seats')
+    setStatus(
+      isFull ? 'Turma cheia: não há vagas disponíveis.' : String(err),
+      'error',
+    )
     btn.disabled = false
   }
 }
@@ -167,6 +198,10 @@ export async function renderAluno(container: HTMLElement): Promise<void> {
           <input id="enrolledFilter" type="checkbox" />
           Apenas matriculadas
         </label>
+        <label class="filter-toggle flag-toggle" title="Habilitar para demonstrar o tratamento de erro em turmas cheias">
+          <input id="fullClassroomFlag" type="checkbox" />
+          Habilitar matrícula em turmas cheias
+        </label>
       </div>
       <ul id="disciplineList" class="discipline-list">
         <li class="empty-msg">Selecione um aluno para ver as disciplinas.</li>
@@ -183,6 +218,7 @@ export async function renderAluno(container: HTMLElement): Promise<void> {
   selectedStudentId = ''
   nameFilter = ''
   showOnlyEnrolled = false
+  allowFullClassroomEnroll = false
 
   try {
     const [students, disciplines, classrooms] = await Promise.all([
@@ -219,6 +255,12 @@ export async function renderAluno(container: HTMLElement): Promise<void> {
   const enrolledCheckbox = document.getElementById('enrolledFilter') as HTMLInputElement
   enrolledCheckbox.addEventListener('change', () => {
     showOnlyEnrolled = enrolledCheckbox.checked
+    renderDisciplineList()
+  })
+
+  const fullClassroomFlag = document.getElementById('fullClassroomFlag') as HTMLInputElement
+  fullClassroomFlag.addEventListener('change', () => {
+    allowFullClassroomEnroll = fullClassroomFlag.checked
     renderDisciplineList()
   })
 }

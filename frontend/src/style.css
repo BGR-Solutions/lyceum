@@ -181,6 +181,11 @@ pre {
   color: #888;
 }
 
+.badge.full {
+  background: #fde8e8;
+  color: #9b1c1c;
+}
+
 .enroll-btn {
   padding: 6px 14px;
   background: #0066cc;
@@ -200,6 +205,14 @@ pre {
   cursor: not-allowed;
 }
 
+.enroll-btn--full {
+  background: #c05000;
+}
+
+.enroll-btn--full:hover:not(:disabled) {
+  background: #a04000;
+}
+
 .empty-msg {
   color: #888;
   padding: 12px 0;
@@ -207,7 +220,23 @@ pre {
 }
 
 .status-msg {
-  color: #c00;
   min-height: 1.4em;
+  color: #444;
 }
 
+.status-msg.error {
+  color: #c00;
+}
+
+.status-msg.success {
+  color: #176a17;
+}
+
+.flag-toggle {
+  background: #fffbea;
+  border: 1px solid #e6c800;
+  border-radius: 6px;
+  padding: 4px 10px;
+  color: #7a5800;
+  font-size: 0.87rem;
+}
