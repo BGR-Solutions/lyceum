@@ -58,7 +58,7 @@ class EnrollmentServiceTest {
     @Test
     void createEnrollmentThrowsWhenClassroomNotFound() {
         UUID classroomId = UUID.randomUUID();
-        when(classroomRepository.findById(classroomId)).thenReturn(Optional.empty());
+        when(classroomRepository.findByIdForUpdate(classroomId)).thenReturn(Optional.empty());
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                 () -> service.createEnrollment(new CreateEnrollmentCommand(UUID.randomUUID(), classroomId)));
@@ -74,7 +74,7 @@ class EnrollmentServiceTest {
                 new SeatLimit(1),
                 new EnrollmentPeriod(LocalDate.now().minusDays(10), LocalDate.now().minusDays(1))
         );
-        when(classroomRepository.findById(classroom.getId())).thenReturn(Optional.of(classroom));
+        when(classroomRepository.findByIdForUpdate(classroom.getId())).thenReturn(Optional.of(classroom));
 
         IllegalStateException ex = assertThrows(IllegalStateException.class,
                 () -> service.createEnrollment(new CreateEnrollmentCommand(UUID.randomUUID(), classroom.getId())));
@@ -91,17 +91,18 @@ class EnrollmentServiceTest {
                 new SeatLimit(1),
                 new EnrollmentPeriod(LocalDate.now().minusDays(1), LocalDate.now().plusDays(1))
         );
-        when(classroomRepository.findById(classroom.getId())).thenReturn(Optional.of(classroom));
+        when(classroomRepository.findByIdForUpdate(classroom.getId())).thenReturn(Optional.of(classroom));
         when(studentRepository.findById(studentId)).thenReturn(Optional.of(new Student(studentId, "Alice")));
         when(enrollmentRepository.save(any(Enrollment.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        doNothing().when(eventPublisher).publish(any(com.lyceum.academic.domain.event.EnrollmentCreated.class));
+        doNothing().when(eventPublisher).publish(any(com.lyceum.academic.domain.event.EnrollmentConfirmed.class));
 
         Enrollment created = service.createEnrollment(new CreateEnrollmentCommand(studentId, classroom.getId()));
 
         assertEquals(studentId, created.getStudent().getId());
         assertEquals("Alice", created.getStudent().getName());
+        assertEquals(EnrollmentStatus.CONFIRMED, created.getStatus());
         verify(enrollmentRepository).save(any(Enrollment.class));
-        verify(eventPublisher).publish(any(com.lyceum.academic.domain.event.EnrollmentCreated.class));
+        verify(eventPublisher).publish(any(com.lyceum.academic.domain.event.EnrollmentConfirmed.class));
     }
 
     @Test
@@ -177,13 +178,26 @@ class EnrollmentServiceTest {
         UUID studentId = UUID.randomUUID();
         Classroom classroom = buildClassroom(5);
         when(enrollmentRepository.existsByStudentIdAndClassroomId(studentId, classroom.getId())).thenReturn(false);
-        when(classroomRepository.findById(classroom.getId())).thenReturn(Optional.of(classroom));
+        when(classroomRepository.findByIdForUpdate(classroom.getId())).thenReturn(Optional.of(classroom));
         when(studentRepository.findById(studentId)).thenReturn(Optional.empty());
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                 () -> service.createEnrollment(new CreateEnrollmentCommand(studentId, classroom.getId())));
 
         assertEquals("Student not found", ex.getMessage());
+    }
+
+    @Test
+    void createEnrollmentThrowsWhenNoSeatsAvailable() {
+        UUID studentId = UUID.randomUUID();
+        Classroom fullClassroom = buildClassroom(1);
+        fullClassroom.consumeSeat();
+        when(classroomRepository.findByIdForUpdate(fullClassroom.getId())).thenReturn(Optional.of(fullClassroom));
+
+        IllegalStateException ex = assertThrows(IllegalStateException.class,
+                () -> service.createEnrollment(new CreateEnrollmentCommand(studentId, fullClassroom.getId())));
+
+        assertEquals("No seats available", ex.getMessage());
     }
 
     // --- Regra: aluno só pode ser matriculado em turmas abertas (no momento da confirmação) ---

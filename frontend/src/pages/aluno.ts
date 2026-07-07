@@ -143,6 +143,7 @@ const enrollStudentInDiscipline = async (disciplineId: string, btn: HTMLButtonEl
     })
     enrolledDisciplineIds.add(disciplineId)
     setStatus('Matrícula realizada com sucesso!', 'success')
+    allClassrooms = await request('/classrooms')
     renderDisciplineList()
   } catch (err) {
     const msg = String(err).toLowerCase()

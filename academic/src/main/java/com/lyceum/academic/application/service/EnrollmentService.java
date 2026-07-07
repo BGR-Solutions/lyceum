@@ -64,28 +64,37 @@ public class EnrollmentService {
             throw new IllegalStateException("Student already enrolled in classroom");
         }
 
-        Classroom classroom = classroomRepository.findById(command.getClassroomId())
+        Classroom classroom = classroomRepository.findByIdForUpdate(command.getClassroomId())
                 .orElseThrow(() -> new IllegalArgumentException("Classroom not found"));
 
         if (!classroom.isOpenForEnrollment(LocalDate.now())) {
             throw new IllegalStateException("Enrollment period is closed");
         }
 
+        if (!classroom.hasAvailableSeats()) {
+            enrollmentsRejectedNoSeats.increment();
+            throw new IllegalStateException("No seats available");
+        }
+
         var student = studentRepository.findById(command.getStudentId())
                 .orElseThrow(() -> new IllegalArgumentException("Student not found"));
 
         Enrollment enrollment = new Enrollment(student, classroom);
+        enrollment.confirm();
         Enrollment saved = enrollmentRepository.save(enrollment);
 
-        eventPublisher.publish(new EnrollmentCreated(
+        eventPublisher.publish(new EnrollmentConfirmed(
                 saved.getId(),
                 saved.getStudent().getId(),
                 saved.getClassroom().getId()
         ));
 
         enrollmentsCreated.increment();
-        log.info("Enrollment created: enrollmentId={} studentId={} classroomId={}",
-                saved.getId(), saved.getStudent().getId(), saved.getClassroom().getId());
+        enrollmentsConfirmed.increment();
+        log.info("Enrollment created and confirmed: enrollmentId={} studentId={} classroomId={} occupiedSeats={}/{}",
+                saved.getId(), saved.getStudent().getId(), saved.getClassroom().getId(),
+                classroom.getSeatLimit().getOccupiedSeats(),
+                classroom.getSeatLimit().getMaxSeats());
 
         return saved;
     }
