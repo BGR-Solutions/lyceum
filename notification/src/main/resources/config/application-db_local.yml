@@ -1,21 +1,25 @@
-# ── DB LOCAL PROFILE ─────────────────────────────────────────────────────────────
-# Usado ao subir a solução de banco de dados localmente ou por serviços de nuvem.
-# O host aponta para o nome do serviço a ser utilizado.
-# Credenciais podem ser sobrescritas por variáveis de ambiente.
+# -- DB LOCAL PROFILE
+# Banco de dados para desenvolvimento local. Edite conforme sua instalacao.
 
 spring:
-  # ── Banco de dados (local) ─────────────────────────────────────────────────
+  # Opcao A (padrao): PostgreSQL local
   datasource:
-    username: ${DB_USER:sa}
-    password: ${:DB_PASS:""}
-    driver-class-name: ${DB_DRIVER:org.h2.Driver}
-#    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:academicdb}
-# Comente o bloco acima e descomente o bloco abaixo para usar H2 local:
-    url: jdbc:h2:mem:academicdb;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
-  flyway:
-    enabled: false
-  jpa: # Mantenha essa tag descomentada mesmo para usar PostgreSQL local.
-    hibernate:
-      ddl-auto: create-drop
-# Comente o bloco acima para usar PostgreSQL local:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/notificationdb
+    username: ${DB_USER:postgres}
+    password: ${DB_PASS:postgres}
+    driver-class-name: org.postgresql.Driver
+  jpa:
     show-sql: true
+
+  # Opcao B: H2 in-memory
+  # datasource:
+  #   url: jdbc:h2:mem:notificationdb;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE
+  #   driver-class-name: org.h2.Driver
+  #   username: sa
+  #   password: ''
+  # jpa:
+  #   show-sql: true
+  #   hibernate:
+  #     ddl-auto: create-drop
+  # flyway:
+  #   enabled: false

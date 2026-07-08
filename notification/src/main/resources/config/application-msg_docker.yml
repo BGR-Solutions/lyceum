@@ -1,12 +1,11 @@
-# ── MSG CLOUD PROFILE ─────────────────────────────────────────────────────────────
-# Usado ao subir a solução de mensageria via serviço de nuvem.
-# O host aponta para o nome do serviço declarado nas variáveis de ambiente.
+# ── MSG DOCKER PROFILE ───────────────────────────────────────────────────
+# Usado ao subir a solução via Docker Compose.
+# O host é o nome do serviço RabbitMQ declarado no docker-compose.yml.
 # Credenciais podem ser sobrescritas por variáveis de ambiente.
 
 spring:
   rabbitmq:
-    host: ${RABBIT_HOST}
-    port: ${RABBIT_PORT}
-    username: ${RABBIT_USER}
-    password: ${RABBIT_PASS}
-  
+    host: rabbitmq
+    port: 5672
+    username: guest
+    password: guest
