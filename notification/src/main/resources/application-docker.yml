@@ -1,0 +1,18 @@
+# ── DOCKER PROFILE ─────────────────────────────────────────────────────────────
+# Usado ao subir a solução via Docker Compose.
+
+spring:
+  jpa:
+    show-sql: false
+
+  datasource:
+    url: jdbc:postgresql://postgres:5432/notificationdb
+    username: ${DB_USER:postgres}
+    password: ${DB_PASS:postgres}
+    driver-class-name: org.postgresql.Driver
+
+  rabbitmq:
+    host: rabbitmq
+    port: ${RABBIT_PORT:5672}
+    username: ${RABBIT_USER:guest}
+    password: ${RABBIT_PASS:guest}

@@ -1,0 +1,25 @@
+# ── LOCAL PROFILE ──────────────────────────────────────────────────────────────
+# Edite este arquivo para corresponder à sua instalação local.
+# Nenhuma variável de ambiente é necessária neste profile.
+
+spring:
+  jpa:
+    show-sql: true
+
+  # ── Banco de dados (PostgreSQL local) ────────────────────────────────────────
+  datasource:
+    url: jdbc:postgresql://localhost:5432/notificationdb
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  # ── Mensageria (RabbitMQ local) ───────────────────────────────────────────────
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+  # Para usar um serviço AMQP em nuvem (ex: CloudAMQP), substitua rabbitmq acima:
+  # rabbitmq:
+  #   addresses: amqps://user:password@host/vhost

@@ -7,7 +7,12 @@ export function renderHome(container: HTMLElement): void {
         <a href="#/cadastros" class="card">
           <span class="card-icon">📋</span>
           <h2>Perfil de Cadastros</h2>
-          <p>Gerencie alunos, cursos, disciplinas, turmas e matrículas.</p>
+          <p>Gerencie alunos, cursos, disciplinas e turmas.</p>
+        </a>
+        <a href="#/matriculas" class="card">
+          <span class="card-icon">📄</span>
+          <h2>Matrículas</h2>
+          <p>Consulte matrículas com filtros por aluno e por turma.</p>
         </a>
         <a href="#/aluno" class="card">
           <span class="card-icon">🎓</span>

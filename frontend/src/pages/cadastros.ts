@@ -3,7 +3,13 @@ import { request } from '../api'
 interface Student { id: string; name: string }
 interface Course { id: string; name: string }
 interface Discipline { id: string; name: string; course?: { id: string; name: string } }
-interface Classroom { id: string; discipline?: { id: string; name: string }; status?: string }
+interface Classroom {
+  id: string
+  discipline?: { id: string; name: string }
+  status?: string
+  seatLimit?: { maxSeats: number; occupiedSeats: number }
+  enrollmentPeriod?: { startDate: string; endDate: string }
+}
 
 // ── state ─────────────────────────────────────────────────────────────────────
 let students: Student[] = []
@@ -27,6 +33,36 @@ const setResult = (msg: string) => {
   if (el) el.textContent = msg
 }
 
+/** Builds a display label for each classroom, appending "(N)" when multiple
+ *  classrooms share the same discipline to distinguish them. */
+export const buildClassroomLabels = (list: Classroom[]): Map<string, string> => {
+  const sorted = [...list].sort((a, b) => {
+    const na = a.discipline?.name ?? ''
+    const nb = b.discipline?.name ?? ''
+    if (na !== nb) return na.localeCompare(nb)
+    return a.id.localeCompare(b.id)
+  })
+  const countPerDisc = new Map<string, number>()
+  for (const c of sorted) {
+    const key = c.discipline?.id ?? c.id
+    countPerDisc.set(key, (countPerDisc.get(key) ?? 0) + 1)
+  }
+  const idxPerDisc = new Map<string, number>()
+  const labels = new Map<string, string>()
+  for (const c of sorted) {
+    const key = c.discipline?.id ?? c.id
+    const name = c.discipline?.name ?? c.id
+    if ((countPerDisc.get(key) ?? 1) === 1) {
+      labels.set(c.id, name)
+    } else {
+      const n = (idxPerDisc.get(key) ?? 0) + 1
+      idxPerDisc.set(key, n)
+      labels.set(c.id, `${name} (${n})`)
+    }
+  }
+  return labels
+}
+
 const loadAll = async () => {
   ;[students, courses, disciplines, classrooms] = await Promise.all([
     request('/students'),
@@ -37,6 +73,7 @@ const loadAll = async () => {
 }
 
 const refreshSelects = () => {
+  const labels = buildClassroomLabels(classrooms)
   const fill = (id: string, items: { id: string; label: string }[]) => {
     const sel = document.getElementById(id) as HTMLSelectElement | null
     if (sel) sel.innerHTML = items.map((i) => `<option value="${i.id}">${esc(i.label)}</option>`).join('')
@@ -44,7 +81,7 @@ const refreshSelects = () => {
   fill('disciplineCourse', courses.map((c) => ({ id: c.id, label: c.name })))
   fill('classroomDiscipline', disciplines.map((d) => ({ id: d.id, label: d.name })))
   fill('enrollmentStudent', students.map((s) => ({ id: s.id, label: s.name })))
-  fill('enrollmentClassroom', classrooms.map((c) => ({ id: c.id, label: c.discipline?.name ?? c.id })))
+  fill('enrollmentClassroom', classrooms.map((c) => ({ id: c.id, label: labels.get(c.id) ?? c.id })))
 }
 
 const refresh = async () => {
@@ -61,14 +98,20 @@ const renderStudentList = () => {
   const tbody = document.querySelector<HTMLTableSectionElement>('#studentTable tbody')
   if (!tbody) return
   tbody.innerHTML = students.length === 0
-    ? '<tr><td colspan="2">Nenhum aluno cadastrado.</td></tr>'
+    ? '<tr><td colspan="3">Nenhum aluno cadastrado.</td></tr>'
     : students.map((s) => `
         <tr data-id="${s.id}">
           <td>${esc(s.name)}</td>
-          <td><button class="btn-edit">Editar</button></td>
+          <td class="action-cell">
+            <button class="btn-edit">Editar</button>
+            <button class="btn-delete">Excluir</button>
+          </td>
         </tr>`).join('')
   tbody.querySelectorAll<HTMLButtonElement>('.btn-edit').forEach((btn) =>
     btn.addEventListener('click', () => startEditStudent(btn.closest('tr')!.dataset.id!)),
+  )
+  tbody.querySelectorAll<HTMLButtonElement>('.btn-delete').forEach((btn) =>
+    btn.addEventListener('click', () => deleteStudent(btn.closest('tr')!.dataset.id!)),
   )
 }
 
@@ -105,19 +148,37 @@ const saveStudent = async () => {
   }
 }
 
+const deleteStudent = async (id: string) => {
+  const s = students.find((x) => x.id === id)
+  if (!confirm(`Excluir aluno "${s?.name}"?`)) return
+  try {
+    await request(`/students/${id}`, { method: 'DELETE' })
+    await refresh()
+    setResult('Aluno excluído.')
+  } catch (err) {
+    setResult(String(err))
+  }
+}
+
 // ── courses ────────────────────────────────────────────────────────────────────
 const renderCourseList = () => {
   const tbody = document.querySelector<HTMLTableSectionElement>('#courseTable tbody')
   if (!tbody) return
   tbody.innerHTML = courses.length === 0
-    ? '<tr><td colspan="2">Nenhum curso cadastrado.</td></tr>'
+    ? '<tr><td colspan="3">Nenhum curso cadastrado.</td></tr>'
     : courses.map((c) => `
         <tr data-id="${c.id}">
           <td>${esc(c.name)}</td>
-          <td><button class="btn-edit">Editar</button></td>
+          <td class="action-cell">
+            <button class="btn-edit">Editar</button>
+            <button class="btn-delete">Excluir</button>
+          </td>
         </tr>`).join('')
   tbody.querySelectorAll<HTMLButtonElement>('.btn-edit').forEach((btn) =>
     btn.addEventListener('click', () => startEditCourse(btn.closest('tr')!.dataset.id!)),
+  )
+  tbody.querySelectorAll<HTMLButtonElement>('.btn-delete').forEach((btn) =>
+    btn.addEventListener('click', () => deleteCourse(btn.closest('tr')!.dataset.id!)),
   )
 }
 
@@ -154,20 +215,38 @@ const saveCourse = async () => {
   }
 }
 
+const deleteCourse = async (id: string) => {
+  const c = courses.find((x) => x.id === id)
+  if (!confirm(`Excluir curso "${c?.name}"?`)) return
+  try {
+    await request(`/courses/${id}`, { method: 'DELETE' })
+    await refresh()
+    setResult('Curso excluído.')
+  } catch (err) {
+    setResult(String(err))
+  }
+}
+
 // ── disciplines ────────────────────────────────────────────────────────────────
 const renderDisciplineList = () => {
   const tbody = document.querySelector<HTMLTableSectionElement>('#disciplineTable tbody')
   if (!tbody) return
   tbody.innerHTML = disciplines.length === 0
-    ? '<tr><td colspan="3">Nenhuma disciplina cadastrada.</td></tr>'
+    ? '<tr><td colspan="4">Nenhuma disciplina cadastrada.</td></tr>'
     : disciplines.map((d) => `
         <tr data-id="${d.id}">
           <td>${esc(d.name)}</td>
           <td>${esc(d.course?.name ?? '–')}</td>
-          <td><button class="btn-edit">Editar</button></td>
+          <td class="action-cell">
+            <button class="btn-edit">Editar</button>
+            <button class="btn-delete">Excluir</button>
+          </td>
         </tr>`).join('')
   tbody.querySelectorAll<HTMLButtonElement>('.btn-edit').forEach((btn) =>
     btn.addEventListener('click', () => startEditDiscipline(btn.closest('tr')!.dataset.id!)),
+  )
+  tbody.querySelectorAll<HTMLButtonElement>('.btn-delete').forEach((btn) =>
+    btn.addEventListener('click', () => deleteDiscipline(btn.closest('tr')!.dataset.id!)),
   )
 }
 
@@ -207,28 +286,51 @@ const saveDiscipline = async () => {
   }
 }
 
+const deleteDiscipline = async (id: string) => {
+  const d = disciplines.find((x) => x.id === id)
+  if (!confirm(`Excluir disciplina "${d?.name}"?`)) return
+  try {
+    await request(`/disciplines/${id}`, { method: 'DELETE' })
+    await refresh()
+    setResult('Disciplina excluída.')
+  } catch (err) {
+    setResult(String(err))
+  }
+}
+
 // ── classrooms ─────────────────────────────────────────────────────────────────
 const renderClassroomList = () => {
   const tbody = document.querySelector<HTMLTableSectionElement>('#classroomTable tbody')
   if (!tbody) return
+  const labels = buildClassroomLabels(classrooms)
   tbody.innerHTML = classrooms.length === 0
-    ? '<tr><td colspan="3">Nenhuma turma cadastrada.</td></tr>'
-    : classrooms.map((c) => `
-        <tr data-id="${c.id}">
-          <td>${esc(c.discipline?.name ?? '–')}</td>
-          <td>${
-            editingClassroomId === c.id
-              ? `<select class="status-sel">${CLASSROOM_STATUSES.map((st) =>
-                  `<option value="${st}"${c.status === st ? ' selected' : ''}>${st}</option>`).join('')}</select>`
-              : esc(c.status ?? '–')
-          }</td>
-          <td>${
-            editingClassroomId === c.id
-              ? `<button class="btn-save-status">Salvar</button>
-                 <button class="btn-cancel-status">Cancelar</button>`
-              : `<button class="btn-edit-status">Editar status</button>`
-          }</td>
-        </tr>`).join('')
+    ? '<tr><td colspan="5">Nenhuma turma cadastrada.</td></tr>'
+    : classrooms.map((c) => {
+        const seats = c.seatLimit
+          ? `${c.seatLimit.occupiedSeats}/${c.seatLimit.maxSeats}`
+          : '–'
+        const period = c.enrollmentPeriod
+          ? `${c.enrollmentPeriod.startDate} → ${c.enrollmentPeriod.endDate}`
+          : '–'
+        const label = labels.get(c.id) ?? c.id
+        const statusCell = editingClassroomId === c.id
+          ? `<select class="status-sel">${CLASSROOM_STATUSES.map((st) =>
+              `<option value="${st}"${c.status === st ? ' selected' : ''}>${st}</option>`).join('')}</select>`
+          : esc(c.status ?? '–')
+        const actionCell = editingClassroomId === c.id
+          ? `<button class="btn-save-status">Salvar</button>
+             <button class="btn-cancel-status">Cancelar</button>`
+          : `<button class="btn-edit-status">Editar status</button>
+             <button class="btn-delete">Excluir</button>`
+        return `
+          <tr data-id="${c.id}">
+            <td>${esc(label)}</td>
+            <td>${esc(seats)}</td>
+            <td>${esc(period)}</td>
+            <td>${statusCell}</td>
+            <td class="action-cell">${actionCell}</td>
+          </tr>`
+      }).join('')
 
   tbody.querySelectorAll<HTMLButtonElement>('.btn-edit-status').forEach((btn) =>
     btn.addEventListener('click', () => {
@@ -257,6 +359,9 @@ const renderClassroomList = () => {
       }
     }),
   )
+  tbody.querySelectorAll<HTMLButtonElement>('.btn-delete').forEach((btn) =>
+    btn.addEventListener('click', () => deleteClassroom(btn.closest('tr')!.dataset.id!)),
+  )
 }
 
 const createClassroom = async () => {
@@ -277,26 +382,40 @@ const createClassroom = async () => {
   }
 }
 
-// ── enrollments ────────────────────────────────────────────────────────────────
+const deleteClassroom = async (id: string) => {
+  const labels = buildClassroomLabels(classrooms)
+  if (!confirm(`Excluir turma "${labels.get(id) ?? id}"?`)) return
+  try {
+    await request(`/classrooms/${id}`, { method: 'DELETE' })
+    await refresh()
+    setResult('Turma excluída.')
+  } catch (err) {
+    setResult(String(err))
+  }
+}
+
+// ── enrollments (admin) ────────────────────────────────────────────────────────
 const renderEnrollmentList = async () => {
   const list = document.getElementById('enrollmentList') as HTMLUListElement | null
   if (!list) return
-
+  const labels = buildClassroomLabels(classrooms)
   const all: any[] = []
   for (const classroom of classrooms) {
     const rows = await request(`/enrollments/by-classroom/${classroom.id}`)
-    all.push(...rows)
+    all.push(...rows.map((e: any) => ({ ...e, _label: labels.get(classroom.id) ?? classroom.id })))
   }
 
   if (all.length === 0) {
-    list.innerHTML = '<li>Nenhuma matrícula encontrada.</li>'
+    list.innerHTML = '<li class="empty-msg">Nenhuma matrícula encontrada.</li>'
     return
   }
   list.innerHTML = all
     .map(
       (e) => `
     <li data-id="${e.id}">
-      ${esc(e.id)} – ${esc(e.status)}
+      <strong>${esc(e.student?.name ?? e.id)}</strong>
+      — ${esc(e._label)}
+      — <span class="status-badge status-${(e.status ?? '').toLowerCase()}">${esc(e.status)}</span>
       <button class="btn-confirm"${e.status !== 'PENDING' ? ' disabled' : ''}>Confirmar</button>
       <button class="btn-cancel-enr"${e.status === 'CANCELLED' ? ' disabled' : ''}>Cancelar</button>
     </li>`,
@@ -392,13 +511,13 @@ export function renderCadastros(container: HTMLElement): void {
       <h2>Turmas</h2>
       <div class="form-row">
         <select id="classroomDiscipline"></select>
-        <input id="classroomSeats" type="number" min="1" value="30" />
+        <input id="classroomSeats" type="number" min="1" value="30" style="width:80px" placeholder="Vagas" />
         <input id="classroomStart" type="date" />
         <input id="classroomEnd" type="date" />
         <button id="createClassroom">Incluir</button>
       </div>
       <table id="classroomTable">
-        <thead><tr><th>Disciplina</th><th>Status</th><th>Ações</th></tr></thead>
+        <thead><tr><th>Turma</th><th>Vagas</th><th>Período</th><th>Status</th><th>Ações</th></tr></thead>
         <tbody></tbody>
       </table>
     </section>
@@ -408,7 +527,7 @@ export function renderCadastros(container: HTMLElement): void {
       <div class="form-row">
         <select id="enrollmentStudent"></select>
         <select id="enrollmentClassroom"></select>
-        <button id="createEnrollment">Incluir matrícula</button>
+        <button id="createEnrollment">Matricular</button>
         <button id="refreshEnrollments">Atualizar listagem</button>
       </div>
       <ul id="enrollmentList"></ul>

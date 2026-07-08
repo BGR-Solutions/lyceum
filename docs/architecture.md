@@ -11,6 +11,7 @@
 - **Mensageria RabbitMQ**: integração assíncrona desacoplada entre contextos.
 - **Lock pessimista para vagas**: prioriza consistência em concorrência alta, com custo de menor paralelismo.
 - **Idempotência no consumidor**: reduz risco de duplicidade em reentregas.
+- **Três profiles de execução** (`local`, `docker`, `cloud`): separam claramente configuração de desenvolvimento, Compose e produção. O `local` é o único editável diretamente; o `cloud` exige variáveis de ambiente sem fallback.
 
 ## Riscos conhecidos
 

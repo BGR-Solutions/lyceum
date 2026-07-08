@@ -14,9 +14,9 @@ class ProfileConfigTest {
     }
 
     @Test
-    void awsBeanReturnsExpectedValue() {
+    void cloudBeanReturnsExpectedValue() {
         ProfileConfig config = new ProfileConfig();
 
-        assertEquals("Bean específico para ambiente AWS", config.awsBean());
+        assertEquals("Bean específico para ambiente cloud", config.cloudBean());
     }
 }

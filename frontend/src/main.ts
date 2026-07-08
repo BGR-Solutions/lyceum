@@ -1,6 +1,7 @@
 import './style.css'
 import { renderHome } from './pages/home'
 import { renderCadastros } from './pages/cadastros'
+import { renderMatriculas } from './pages/matriculas'
 import { renderAluno } from './pages/aluno'
 
 const app = document.querySelector<HTMLDivElement>('#app')!
@@ -10,6 +11,8 @@ const navigate = async () => {
 
   if (hash.startsWith('#/cadastros')) {
     renderCadastros(app)
+  } else if (hash.startsWith('#/matriculas')) {
+    await renderMatriculas(app)
   } else if (hash.startsWith('#/aluno')) {
     await renderAluno(app)
   } else {

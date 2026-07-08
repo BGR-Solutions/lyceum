@@ -5,8 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 /**
- * Configuration class for defining beans based on active profiles (on the application.yml).
- * This class allows the application to load different beans depending on the environment (e.g., local, AWS).
+ * Configuration class for defining beans based on active profiles.
+ * Profiles: local (development), docker (Docker Compose), cloud (production).
  */
 @Configuration
 public class ProfileConfig {
@@ -18,8 +18,8 @@ public class ProfileConfig {
     }
 
     @Bean
-    @Profile("aws")
-    public String awsBean() {
-        return "Bean específico para ambiente AWS";
+    @Profile("cloud")
+    public String cloudBean() {
+        return "Bean específico para ambiente cloud";
     }
 }
