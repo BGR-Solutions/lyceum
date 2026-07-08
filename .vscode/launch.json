@@ -1,61 +1,87 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
+        // ── Academic ────────────────────────────────────────────────────────────
         {
             "type": "java",
-            "name": "AcademicApplication",
+            "name": "Academic - local",
             "request": "launch",
             "cwd": "${workspaceFolder}/academic",
             "mainClass": "com.lyceum.academic.AcademicApplication",
             "projectName": "academic",
             "env": {
-                "SPRING_PROFILES_ACTIVE": "compose",
-                "DB_HOST": "host.docker.internal",
-                "DB_PORT": "5432",
-                "DB_NAME": "lyceum",
-                "DB_USER": "postgres",
-                "DB_PASSWORD": "postgres",
-                "DB_DRIVER": "org.postgresql.Driver",
-                "RABBIT_HOST": "host.docker.internal",
-                "RABBIT_PORT": "5672",
-                "RABBIT_USER": "guest",
-                "RABBIT_PASSWORD": "guest"
+                "SPRING_PROFILES_ACTIVE": "local"
+                // Profile 'local' é o padrão. Os valores vêm de application-db_local.yml, application-msg_local.yml e application-loggin_local.yml.
+                // Edite esses arquivos para ajustar host, porta ou credenciais locais.
             }
         },
         {
             "type": "java",
-            "name": "NotificationApplication",
+            "name": "Academic - cloud",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/academic",
+            "mainClass": "com.lyceum.academic.AcademicApplication",
+            "projectName": "academic",
+            "env": {
+                "SPRING_PROFILES_ACTIVE": "cloud",
+                "DB_HOST": "seu-host-postgres",
+                "DB_PORT": "5432",
+                "DB_NAME": "academicdb",
+                "DB_USER": "seu-usuario",
+                "DB_PASS": "sua-senha",
+                "RABBIT_HOST": "seu-host-rabbitmq",
+                "RABBIT_PORT": "5672",
+                "RABBIT_USER": "seu-usuario-rabbit",
+                "RABBIT_PASS": "sua-senha-rabbit"
+            }
+        },
+
+        // ── Notification ────────────────────────────────────────────────────────
+        {
+            "type": "java",
+            "name": "Notification - local",
             "request": "launch",
             "cwd": "${workspaceFolder}/notification",
             "mainClass": "com.lyceum.notification.NotificationApplication",
             "projectName": "notification",
             "env": {
-                "SPRING_PROFILES_ACTIVE": "compose",
-                "DB_HOST": "host.docker.internal",
-                "DB_PORT": "5432",
-                "DB_NAME": "lyceum",
-                "DB_USER": "postgres",
-                "DB_PASSWORD": "postgres",
-                "DB_DRIVER": "org.postgresql.Driver",
-                "RABBIT_HOST": "host.docker.internal",
-                "RABBIT_PORT": "5672",
-                "RABBIT_USER": "guest",
-                "RABBIT_PASSWORD": "guest"
+                "SPRING_PROFILES_ACTIVE": "local"
             }
         },
         {
-            "type": "node",
-            "name": "FrontApplication",
+            "type": "java",
+            "name": "Notification - cloud",
             "request": "launch",
-            "program": "${workspaceFolder}/front/src/main.ts",
+            "cwd": "${workspaceFolder}/notification",
+            "mainClass": "com.lyceum.notification.NotificationApplication",
+            "projectName": "notification",
+            "env": {
+                "SPRING_PROFILES_ACTIVE": "cloud",
+                "DB_HOST": "seu-host-postgres",
+                "DB_PORT": "5432",
+                "DB_NAME": "notificationdb",
+                "DB_USER": "seu-usuario",
+                "DB_PASS": "sua-senha",
+                "RABBIT_HOST": "seu-host-rabbitmq",
+                "RABBIT_PORT": "5672",
+                "RABBIT_USER": "seu-usuario-rabbit",
+                "RABBIT_PASS": "sua-senha-rabbit"
+            }
+        },
+
+        // ── Frontend ────────────────────────────────────────────────────────────
+        {
+            "type": "node",
+            "name": "Frontend - dev",
+            "request": "launch",
             "cwd": "${workspaceFolder}/frontend",
             "runtimeExecutable": "npm",
             "runtimeArgs": ["run", "dev"],
             "env": {
-                "PROFILES_ACTIVE": "compose"
+                // VITE_API_BASE é lido em src/api.ts via import.meta.env.VITE_API_BASE.
+                // Sobrescreve o valor do arquivo .env sem precisar editá-lo.
+                "VITE_API_BASE": "http://localhost:8080"
             }
         }
     ]

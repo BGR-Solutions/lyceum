@@ -70,6 +70,35 @@ Descomente e preencha a opção `rabbitmq.addresses` no `application-local.yml` 
    mvn -pl notification spring-boot:run
    ```
 
+### Depurando via VS Code (launch.json)
+
+O arquivo `.vscode/launch.json` contém configurações prontas para rodar e depurar os serviços diretamente pelo VS Code, sem usar o terminal. As configurações mapeiam os três profiles disponíveis.
+
+#### Backend
+
+| Configuração | Profile | Quando usar |
+|---|---|---|
+| `Academic - local` | `local` | Infra rodando local ou via Docker Compose na porta padrão |
+| `Academic - cloud` | `cloud` | Conectar a banco e mensageria em nuvem; edite os valores de env diretamente no `launch.json` |
+| `Notification - local` | `local` | Mesmo cenário do Academic |
+| `Notification - cloud` | `cloud` | Mesmo cenário do Academic |
+
+Para o profile **`local`** (padrão), nenhuma variável de ambiente é necessária — os valores vêm do `application-local.yml`. Para o profile **`cloud`**, os valores das variáveis `DB_HOST`, `DB_PASS`, `RABBIT_HOST` etc. devem ser preenchidos diretamente no `launch.json` (ou exportados no shell antes de abrir o VS Code).
+
+> **Nota de segurança:** não comite credenciais reais no `launch.json`. Para ambientes sensíveis, prefira exportar as variáveis no shell ou usar um gerenciador de segredos.
+
+#### Frontend
+
+A única variável de ambiente do frontend é `VITE_API_BASE`, lida em `src/api.ts` via `import.meta.env.VITE_API_BASE`. O valor padrão (`http://localhost:8080`) já está no arquivo `frontend/.env`. A configuração `Frontend - dev` no `launch.json` permite sobrescrever esse valor sem editar o `.env`:
+
+```json
+"env": { "VITE_API_BASE": "http://localhost:8080" }
+```
+
+Altere o valor caso o backend esteja em outra porta ou endereço. Variáveis definidas no `launch.json` têm precedência sobre o arquivo `.env`.
+
+> O `launch.json` inicia o servidor Vite via `npm run dev`. Para depurar o JavaScript no browser, use a extensão **Playwright** ou o **Chrome Debugger** do VS Code em conjunto.
+
 ### Frontend sem Docker
 
 **Pré-requisitos:** Node 22+, backend `academic` em execução (porta 8080).
