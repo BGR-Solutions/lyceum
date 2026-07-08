@@ -1,6 +1,6 @@
 # ── DOCKER PROFILE ─────────────────────────────────────────────────────────────
-# Usado ao subir a solução via Docker Compose.
-# Os hosts apontam para os nomes dos serviços declarados no docker-compose.yml.
+# Usado ao subir a solução de banco de dados via Docker Compose.
+# O host aponta para o nome do serviço declarado no docker-compose.yml.
 # Credenciais podem ser sobrescritas por variáveis de ambiente.
 
 spring:
@@ -8,13 +8,7 @@ spring:
     show-sql: false
 
   datasource:
-    url: jdbc:postgresql://postgres:5432/academicdb
+    url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/${DB_NAME:academicdb}
     username: ${DB_USER:postgres}
     password: ${DB_PASS:postgres}
-    driver-class-name: org.postgresql.Driver
-
-  rabbitmq:
-    host: rabbitmq
-    port: ${RABBIT_PORT:5672}
-    username: ${RABBIT_USER:guest}
-    password: ${RABBIT_PASS:guest}
+    driver-class-name: ${DB_DRIVER:org.postgresql.Driver}

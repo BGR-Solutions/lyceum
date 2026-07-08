@@ -1,0 +1,12 @@
+# ── MSG DOCKER PROFILE ─────────────────────────────────────────────────────────────
+# Usado ao subir a solução de mensageria via Docker Compose.
+# O host aponta para o nome do serviço declarado no docker-compose.yml.
+# Credenciais podem ser sobrescritas por variáveis de ambiente.
+
+spring:
+  rabbitmq:
+    host: ${RABBIT_HOST:rabbitmq}
+    port: ${RABBIT_PORT:5672}
+    username: ${RABBIT_USER:guest}
+    password: ${RABBIT_PASS:guest}
+  

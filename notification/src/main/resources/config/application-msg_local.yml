@@ -1,0 +1,17 @@
+# ── MSG LOCAL PROFILE ─────────────────────────────────────────────────────────────
+# Usado ao subir a solução de mensageria localmente ou por serviços de nuvem.
+# O host aponta para o nome do serviço a ser utilizado.
+# Credenciais podem ser sobrescritas por variáveis de ambiente.
+
+spring:
+  # Opção A: host/porta/usuário individuais
+  rabbitmq:
+    host: ${RABBIT_HOST}
+    port: ${RABBIT_PORT}
+    username: ${RABBIT_USER}
+    password: ${RABBIT_PASS}
+
+  # Opção B: URL AMQP completa (CloudAMQP, AWS MQ, etc.)
+  # Substitua o bloco rabbitmq acima por:
+  # rabbitmq:
+  #   addresses: ${RABBIT_URL}   # ex: amqps://user:pass@host/vhost

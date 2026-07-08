@@ -3,7 +3,11 @@ cors:
 
 spring:
   profiles:
-    active: local
+    active: ${SPRING_PROFILES_ACTIVE:compose}
+    group:
+      dev: db_local, msg_local, loggiing_local
+      compose: db_docker, msg_docker
+      custom: db_local, msg_docker
   application:
     name: academic-service
   jpa:

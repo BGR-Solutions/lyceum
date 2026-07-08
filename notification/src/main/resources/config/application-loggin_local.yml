@@ -1,0 +1,7 @@
+# ── LOGGING LOCAL PROFILE ─────────────────────────────────────────────────────────────
+# Usado ao subir a solução de logging localmente.
+
+logging:
+  structured:
+    format:
+      console: ecs

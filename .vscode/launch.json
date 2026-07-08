@@ -1,0 +1,62 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "AcademicApplication",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/academic",
+            "mainClass": "com.lyceum.academic.AcademicApplication",
+            "projectName": "academic",
+            "env": {
+                "SPRING_PROFILES_ACTIVE": "compose",
+                "DB_HOST": "host.docker.internal",
+                "DB_PORT": "5432",
+                "DB_NAME": "lyceum",
+                "DB_USER": "postgres",
+                "DB_PASSWORD": "postgres",
+                "DB_DRIVER": "org.postgresql.Driver",
+                "RABBIT_HOST": "host.docker.internal",
+                "RABBIT_PORT": "5672",
+                "RABBIT_USER": "guest",
+                "RABBIT_PASSWORD": "guest"
+            }
+        },
+        {
+            "type": "java",
+            "name": "NotificationApplication",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/notification",
+            "mainClass": "com.lyceum.notification.NotificationApplication",
+            "projectName": "notification",
+            "env": {
+                "SPRING_PROFILES_ACTIVE": "compose",
+                "DB_HOST": "host.docker.internal",
+                "DB_PORT": "5432",
+                "DB_NAME": "lyceum",
+                "DB_USER": "postgres",
+                "DB_PASSWORD": "postgres",
+                "DB_DRIVER": "org.postgresql.Driver",
+                "RABBIT_HOST": "host.docker.internal",
+                "RABBIT_PORT": "5672",
+                "RABBIT_USER": "guest",
+                "RABBIT_PASSWORD": "guest"
+            }
+        },
+        {
+            "type": "node",
+            "name": "FrontApplication",
+            "request": "launch",
+            "program": "${workspaceFolder}/front/src/main.ts",
+            "cwd": "${workspaceFolder}/frontend",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["run", "dev"],
+            "env": {
+                "PROFILES_ACTIVE": "compose"
+            }
+        }
+    ]
+}

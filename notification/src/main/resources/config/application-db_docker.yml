@@ -1,0 +1,14 @@
+# ── DOCKER PROFILE ─────────────────────────────────────────────────────────────
+# Usado ao subir a solução de banco de dados via Docker Compose.
+# O host aponta para o nome do serviço declarado no docker-compose.yml.
+# Credenciais podem ser sobrescritas por variáveis de ambiente.
+
+spring:
+  jpa:
+    show-sql: false
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/${DB_NAME:academicdb}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASS:postgres}
+    driver-class-name: ${DB_DRIVER:org.postgresql.Driver}
