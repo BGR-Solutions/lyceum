@@ -1,10 +1,10 @@
 spring:
   profiles:
-    active: ${SPRING_PROFILES_ACTIVE:compose}
+    active: ${SPRING_PROFILES_ACTIVE:docker}
     group:
       dev: db_local, msg_local, loggiing_local
-      compose: db_docker, msg_docker
-      custom: db_local, msg_docker
+      docker: db_docker, msg_docker
+      cloud: db_cloud, msg_cloud
   application:
     name: notification-service
   jpa:

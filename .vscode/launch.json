@@ -12,8 +12,19 @@
             "projectName": "academic",
             "env": {
                 "SPRING_PROFILES_ACTIVE": "local"
-                // Profile 'local' é o padrão. Os valores vêm de application-db_local.yml, application-msg_local.yml e application-loggin_local.yml.
-                // Edite esses arquivos para ajustar host, porta ou credenciais locais.
+            }
+        },
+        {
+            "type": "java",
+            "name": "Academic - docker",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/academic",
+            "mainClass": "com.lyceum.academic.AcademicApplication",
+            "projectName": "academic",
+            "env": {
+                "SPRING_PROFILES_ACTIVE": "docker"
+                // Profile 'docker' é o padrão. Os valores vêm de application-db_docker.yml e application-msg_docker.yml.
+                // Edite esses arquivos para ajustar host, porta ou credenciais do Docker.
             }
         },
         {
@@ -47,6 +58,19 @@
             "projectName": "notification",
             "env": {
                 "SPRING_PROFILES_ACTIVE": "local"
+            }
+        },
+        {
+            "type": "java",
+            "name": "Notification - docker",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/notification",
+            "mainClass": "com.lyceum.notification.NotificationApplication",
+            "projectName": "notification",
+            "env": {
+                "SPRING_PROFILES_ACTIVE": "docker"
+                // Profile 'docker' é o padrão. Os valores vêm de application-db_docker.yml e application-msg_docker.yml.
+                // Edite esses arquivos para ajustar host, porta ou credenciais do Docker.
             }
         },
         {
