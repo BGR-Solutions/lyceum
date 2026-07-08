@@ -19,22 +19,25 @@ Sistema acadêmico de matrículas composto por dois serviços Spring Boot (`acad
 ```bash
 docker compose up -d postgres
 ```
+
 O profile `local` já aponta para `localhost:5432`.
 
 **Opção B — PostgreSQL instalado localmente**
-Crie os bancos e edite as credenciais nos arquivos `application-local.yml` de cada módulo:
+Crie os bancos e edite as credenciais nos arquivos `application-db_local.yml` de cada módulo:
+
 ```sql
 CREATE DATABASE academicdb;
 CREATE DATABASE notificationdb;
 ```
+
 - `academic/src/main/resources/config/application-local.yml`
 - `notification/src/main/resources/application-local.yml`
 
 **Opção C — H2 in-memory (sem instalação, para desenvolvimento rápido)**
-Descomente a seção H2 no `application-local.yml` do módulo desejado e comente a seção PostgreSQL. Veja o próprio arquivo para instruções.
+Descomente a seção H2 no `application-db_local.yml` do módulo desejado e comente a seção PostgreSQL. Veja o próprio arquivo para instruções.
 
 **Opção D — Banco em nuvem**
-Edite `application-cloud.yml` com host, porta, usuário e senha, ou exporte-os como variáveis de ambiente. Ative o profile `cloud`.
+Edite `application-db_cloud.yml` com host, porta, usuário e senha, ou exporte-os como variáveis de ambiente. Ative o profile `cloud`.
 
 ##### Mensageria (RabbitMQ)
 
@@ -44,10 +47,10 @@ docker compose up -d rabbitmq
 ```
 
 **Opção B — RabbitMQ instalado localmente**
-O profile `local` já aponta para `localhost:5672` com as credenciais padrão (`guest/guest`). Edite `application-local.yml` se necessário.
+O profile `local` já aponta para `localhost:5672` com as credenciais padrão (`guest/guest`). Edite `application-msg_local.yml` se necessário.
 
 **Opção C — Serviço AMQP em nuvem (ex: CloudAMQP, AWS MQ)**
-Descomente e preencha a opção `rabbitmq.addresses` no `application-local.yml` (para uso local) ou `application-cloud.yml` (para deploy).
+Descomente e preencha a opção `rabbitmq.addresses` no `application-local.yml` (para uso local) ou `application-msg_cloud.yml` (para deploy).
 
 ##### Profiles disponíveis
 
